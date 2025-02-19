@@ -1,3 +1,9 @@
+// Menu helper class developed with AI assistance for:
+// - Arrow key navigation
+// - List selection functionality
+// - Input validation and formatting
+// - Console display enhancements
+
 namespace Mattin.Project.Presentation.Helpers;
 
 public class MenuHelper

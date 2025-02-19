@@ -1,3 +1,10 @@
+// Base repository implementation enhanced with AI assistance for:
+// - Generic database operations
+// - Entity Framework Core integration
+// - Error handling and logging
+// - Transaction management
+// - Performance optimization
+
 using Mattin.Project.Core.Common;
 using Mattin.Project.Core.Interfaces.Base;
 using Mattin.Project.Core.Models.Entities;

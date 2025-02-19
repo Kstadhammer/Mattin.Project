@@ -2,9 +2,27 @@
 
 A console-based project management system built with .NET 9.0, featuring a clean architecture and modern C# practices.
 
+## AI Assistance Acknowledgment
+
+This project was developed with the assistance of AI tools, which helped with:
+- Architecture design and implementation
+- Database schema and relationships
+- Input validation and error handling
+- Console UI navigation and display
+- Code quality and best practices
+
+The AI assistance was primarily used for:
+- Setting up the clean architecture structure
+- Implementing the repository and service patterns
+- Creating the interactive console menu system
+- Configuring Entity Framework with SQLite
+- Adding data validation and error handling
+
+While AI provided guidance and suggestions, all code was reviewed, tested, and customized to meet the specific requirements of the project.
+
 ## Features
 
-- 📋 Project Management
+- �� Project Management
   - Create and edit projects
   - Track project status and progress
   - Manage project budgets and timelines

@@ -1,4 +1,5 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿// This project was developed with assistance from AI for architecture design and implementation
+// The AI helped with setting up the clean architecture, dependency injection, and database integration
 
 using System.IO;
 using Mattin.Project.Core.Interfaces.Factories;

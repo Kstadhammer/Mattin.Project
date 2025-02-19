@@ -1,10 +1,17 @@
+// Database context configuration enhanced with AI assistance for:
+// - Entity relationships and constraints
+// - Data seeding
+// - Automatic timestamps
+// - SQLite integration
+
 using Mattin.Project.Core.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace Mattin.Project.Infrastructure.Contexts;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : DbContext(options)
 {
     public DbSet<ProjectEntity> Projects { get; set; } = null!;
     public DbSet<Client> Clients { get; set; } = null!;

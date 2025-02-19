@@ -1,3 +1,6 @@
+// Dependency injection configuration developed with AI assistance
+// Implements clean architecture patterns and service registration
+
 using AutoMapper;
 using Mattin.Project.Core.Interfaces;
 using Mattin.Project.Core.Interfaces.Factories;

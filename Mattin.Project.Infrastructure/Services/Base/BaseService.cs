@@ -1,10 +1,17 @@
+// Base service implementation developed with AI assistance for:
+// - Generic CRUD operations
+// - Error handling patterns
+// - Repository integration
+// - Common business logic
+
 using Mattin.Project.Core.Common;
 using Mattin.Project.Core.Interfaces.Base;
 using Mattin.Project.Core.Models.Entities;
 
 namespace Mattin.Project.Infrastructure.Services.Base;
 
-public abstract class BaseService<TEntity>(IBaseRepository<TEntity> repository) : IBaseService<TEntity>
+public abstract class BaseService<TEntity>(IBaseRepository<TEntity> repository)
+    : IBaseService<TEntity>
     where TEntity : BaseEntity
 {
     protected readonly IBaseRepository<TEntity> _repository = repository;

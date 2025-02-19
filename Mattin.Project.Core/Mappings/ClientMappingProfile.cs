@@ -1,3 +1,9 @@
+// Client mapping profile enhanced with AI assistance for:
+// - DTO transformations
+// - Property mapping rules
+// - Relationship handling
+// - Data validation
+
 using AutoMapper;
 using Mattin.Project.Core.Models.DTOs.Client;
 using Mattin.Project.Core.Models.Entities;

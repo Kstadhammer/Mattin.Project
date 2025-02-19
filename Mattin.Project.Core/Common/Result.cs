@@ -1,3 +1,9 @@
+// Result pattern implementation enhanced with AI assistance for:
+// - Error handling
+// - Operation result encapsulation
+// - Type-safe success/failure states
+// - Exception prevention
+
 namespace Mattin.Project.Core.Common;
 
 public class Result

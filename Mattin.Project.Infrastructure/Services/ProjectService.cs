@@ -1,3 +1,9 @@
+// Project service implementation enhanced with AI assistance for:
+// - Automatic project number generation
+// - Status management
+// - Price calculations
+// - Error handling and validation
+
 using AutoMapper;
 using Mattin.Project.Core.Common;
 using Mattin.Project.Core.Interfaces;
@@ -91,12 +97,39 @@ public class ProjectService(
 
     public async Task<ProjectDetailsDto> UpdateAsync(UpdateProjectDto dto)
     {
-        var entity = mapper.Map<ProjectEntity>(dto);
-        var result = await projectRepository.UpdateAsync(entity);
-        if (result.IsFailure)
-            throw new InvalidOperationException(result.Error);
+        try
+        {
+            var entity = mapper.Map<ProjectEntity>(dto);
 
-        return mapper.Map<ProjectDetailsDto>(result.Value);
+            // Get status by name
+            var statusResult = await statusRepository.GetAllAsync();
+            if (statusResult.IsFailure)
+                throw new InvalidOperationException(statusResult.Error);
+
+            var status =
+                statusResult.Value.FirstOrDefault(s => s.Name == dto.Status)
+                ?? throw new InvalidOperationException($"Invalid status: {dto.Status}");
+
+            entity.StatusId = status.Id;
+            entity.Modified = DateTime.UtcNow;
+
+            var result = await projectRepository.UpdateAsync(entity);
+            if (result.IsFailure)
+                throw new InvalidOperationException(result.Error);
+
+            return mapper.Map<ProjectDetailsDto>(result.Value);
+        }
+        catch (Exception ex)
+        {
+            var fullMessage = ex.Message;
+            var innerException = ex.InnerException;
+            while (innerException != null)
+            {
+                fullMessage += $"\nInner Exception: {innerException.Message}";
+                innerException = innerException.InnerException;
+            }
+            throw new InvalidOperationException(fullMessage);
+        }
     }
 
     public async Task<bool> DeleteAsync(int id)

@@ -10,8 +10,8 @@ namespace Mattin.Project.Infrastructure.Services;
 public class ClientService(
     IClientRepository clientRepository,
     IProjectRepository projectRepository,
-    IMapper mapper)
-    : IClientService
+    IMapper mapper
+) : IClientService
 {
     public async Task<IEnumerable<ClientDetailsDto>> GetAllAsync()
     {

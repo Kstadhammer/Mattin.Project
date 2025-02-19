@@ -1,3 +1,9 @@
+// Client entity model enhanced with AI assistance for:
+// - Data validation attributes
+// - Property constraints
+// - Relationship definitions
+// - Domain model design
+
 using System.ComponentModel.DataAnnotations;
 
 namespace Mattin.Project.Core.Models.Entities;

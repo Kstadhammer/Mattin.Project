@@ -1,3 +1,9 @@
+// Project entity model enhanced with AI assistance for:
+// - Data validation and constraints
+// - Relationship modeling
+// - Business rules implementation
+// - Domain model design
+
 using System.ComponentModel.DataAnnotations;
 
 namespace Mattin.Project.Core.Models.Entities;

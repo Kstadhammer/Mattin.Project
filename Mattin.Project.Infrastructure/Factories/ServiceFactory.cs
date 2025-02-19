@@ -1,3 +1,9 @@
+// Service factory implementation enhanced with AI assistance for:
+// - Dependency injection
+// - Service instantiation
+// - Factory pattern implementation
+// - Cross-cutting concerns
+
 using AutoMapper;
 using Mattin.Project.Core.Interfaces;
 using Mattin.Project.Core.Interfaces.Factories;

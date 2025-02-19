@@ -1,3 +1,9 @@
+// Project status implementation enhanced with AI assistance for:
+// - Status constants and validation
+// - Business rules enforcement
+// - Type safety
+// - Domain-specific naming
+
 namespace Mattin.Project.Core.Models.Entities;
 
 public static class ProjectStatus

@@ -1,3 +1,9 @@
+// Mapping profile developed with AI assistance for:
+// - Entity to DTO transformations
+// - Property mapping configurations
+// - Relationship handling
+// - Data validation rules
+
 using AutoMapper;
 using Mattin.Project.Core.Models.DTOs.Project;
 using Mattin.Project.Core.Models.Entities;
@@ -29,9 +35,12 @@ public class ProjectMappingProfile : Profile
             .ForMember(dest => dest.Modified, opt => opt.Ignore())
             .ForMember(dest => dest.ProjectNumber, opt => opt.Ignore())
             .ForMember(dest => dest.Client, opt => opt.Ignore())
-            .ForMember(dest => dest.ProjectManager, opt => opt.Ignore());
+            .ForMember(dest => dest.ProjectManager, opt => opt.Ignore())
+            .ForMember(dest => dest.Status, opt => opt.Ignore())
+            .ForMember(dest => dest.StatusId, opt => opt.Ignore());
 
         // ProjectEntity -> UpdateProjectDto
-        CreateMap<ProjectEntity, UpdateProjectDto>();
+        CreateMap<ProjectEntity, UpdateProjectDto>()
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name));
     }
 }

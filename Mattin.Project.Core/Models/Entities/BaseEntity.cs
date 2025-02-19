@@ -1,3 +1,9 @@
+// Base entity implementation enhanced with AI assistance for:
+// - Common entity properties
+// - Audit trail functionality
+// - Timestamp management
+// - Entity tracking
+
 namespace Mattin.Project.Core.Models.Entities;
 
 public abstract class BaseEntity
