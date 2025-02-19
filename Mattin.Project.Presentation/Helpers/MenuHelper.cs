@@ -14,15 +14,26 @@ public class MenuHelper
         do
         {
             Console.CursorVisible = false;
+
+            // Clear the display area
+            var currentTop = Console.CursorTop;
+            for (int i = 0; i < options.Length; i++)
+            {
+                Console.SetCursorPosition(0, currentTop + i);
+                Console.Write(new string(' ', Console.WindowWidth));
+            }
+            Console.SetCursorPosition(0, currentTop);
+
             for (int i = 0; i < options.Length; i++)
             {
                 if (i == selectedIndex)
                 {
-                    Console.BackgroundColor = ConsoleColor.White;
-                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.BackgroundColor = ConsoleColor.DarkBlue;
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
                 else if (itemColor.HasValue)
                 {
+                    Console.ResetColor();
                     Console.ForegroundColor = itemColor.Value;
                 }
 
@@ -38,14 +49,14 @@ public class MenuHelper
                 selectedIndex--;
                 if (selectedIndex < 0)
                     selectedIndex = options.Length - 1;
-                Console.CursorTop -= options.Length;
+                Console.SetCursorPosition(0, currentTop);
             }
             else if (keyPressed == ConsoleKey.DownArrow)
             {
                 selectedIndex++;
                 if (selectedIndex >= options.Length)
                     selectedIndex = 0;
-                Console.CursorTop -= options.Length;
+                Console.SetCursorPosition(0, currentTop);
             }
         } while (keyPressed != ConsoleKey.Enter);
 
@@ -64,6 +75,7 @@ public class MenuHelper
         if (!itemsList.Any())
             throw new InvalidOperationException($"No {title.ToLower()} available.");
 
+        Console.Clear();
         Console.WriteLine($"\nAvailable {title}:");
         Console.WriteLine("═".PadRight(Console.WindowWidth - 1, '═'));
 

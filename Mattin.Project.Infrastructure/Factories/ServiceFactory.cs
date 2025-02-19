@@ -7,6 +7,7 @@
 using AutoMapper;
 using Mattin.Project.Core.Interfaces;
 using Mattin.Project.Core.Interfaces.Factories;
+using Mattin.Project.Infrastructure.Contexts;
 using Mattin.Project.Infrastructure.Services;
 
 namespace Mattin.Project.Infrastructure.Factories;
@@ -15,18 +16,24 @@ public class ServiceFactory : IServiceFactory
 {
     private readonly IRepositoryFactory _repositoryFactory;
     private readonly IMapper _mapper;
+    private readonly ApplicationDbContext _context;
 
-    public ServiceFactory(IRepositoryFactory repositoryFactory, IMapper mapper)
+    public ServiceFactory(
+        IRepositoryFactory repositoryFactory,
+        IMapper mapper,
+        ApplicationDbContext context
+    )
     {
         _repositoryFactory = repositoryFactory;
         _mapper = mapper;
+        _context = context;
     }
 
     public IProjectService CreateProjectService()
     {
         var projectRepository = _repositoryFactory.CreateProjectRepository();
         var statusRepository = _repositoryFactory.CreateStatusRepository();
-        return new ProjectService(projectRepository, statusRepository, _mapper);
+        return new ProjectService(projectRepository, statusRepository, _mapper, _context);
     }
 
     public IClientService CreateClientService()

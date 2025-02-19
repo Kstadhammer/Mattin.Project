@@ -82,8 +82,8 @@ public class ProjectMenu : BaseMenu
                             + $"  Status: {p.Status}\n"
                             + $"  Manager: {p.ProjectManager?.Name ?? "N/A"}\n"
                             + $"  Timeline: {p.StartDate:yyyy-MM-dd} to {(p.EndDate.HasValue ? p.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")}\n"
-                            + $"  Budget: {p.FormattedTotalPrice}",
-                ConsoleColor.Cyan
+                            + $"  Budget: {p.FormattedTotalPrice}\n",
+                ConsoleColor.Yellow
             );
 
             // If "Back to Main Menu" was selected
@@ -106,7 +106,7 @@ public class ProjectMenu : BaseMenu
                 "Exit to Menu",
             };
 
-            var choice = _menuHelper.ShowMenu(editOptions, itemColor: ConsoleColor.Yellow);
+            var choice = _menuHelper.ShowMenu(editOptions, itemColor: ConsoleColor.Green);
 
             try
             {

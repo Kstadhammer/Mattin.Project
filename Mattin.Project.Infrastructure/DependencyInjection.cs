@@ -55,7 +55,12 @@ public static class DependencyInjection
         services.AddScoped<IProjectManagerRepository, ProjectManagerRepository>();
 
         // Services
-        services.AddScoped<IProjectService, ProjectService>();
+        services.AddScoped<IProjectService>(sp => new ProjectService(
+            sp.GetRequiredService<IProjectRepository>(),
+            sp.GetRequiredService<IStatusRepository>(),
+            sp.GetRequiredService<IMapper>(),
+            sp.GetRequiredService<ApplicationDbContext>()
+        ));
         services.AddScoped<IClientService, ClientService>();
         services.AddScoped<IProjectManagerService, ProjectManagerService>();
 

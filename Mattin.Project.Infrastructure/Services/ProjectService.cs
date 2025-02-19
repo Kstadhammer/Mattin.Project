@@ -9,6 +9,7 @@ using Mattin.Project.Core.Common;
 using Mattin.Project.Core.Interfaces;
 using Mattin.Project.Core.Models.DTOs.Project;
 using Mattin.Project.Core.Models.Entities;
+using Mattin.Project.Infrastructure.Contexts;
 using Mattin.Project.Infrastructure.Services.Base;
 
 namespace Mattin.Project.Infrastructure.Services;
@@ -16,9 +17,12 @@ namespace Mattin.Project.Infrastructure.Services;
 public class ProjectService(
     IProjectRepository projectRepository,
     IStatusRepository statusRepository,
-    IMapper mapper
+    IMapper mapper,
+    ApplicationDbContext context
 ) : BaseService<ProjectEntity>(projectRepository), IProjectService
 {
+    private readonly ApplicationDbContext _context = context;
+
     public async Task<IEnumerable<ProjectDetailsDto>> GetAllAsync()
     {
         var result = await projectRepository.GetAllAsync();
@@ -42,45 +46,55 @@ public class ProjectService(
     {
         try
         {
-            var entity = mapper.Map<ProjectEntity>(dto);
-            Console.WriteLine(
-                $"Debug: Mapped entity - ProjectManagerId: {entity.ProjectManagerId}, ClientId: {entity.ClientId}"
-            );
-
-            // Generate project number
-            entity.ProjectNumber = await GenerateProjectNumberAsync();
-            Console.WriteLine($"Debug: Generated project number: {entity.ProjectNumber}");
-
-            // Get status by name
-            var statusResult = await statusRepository.GetAllAsync();
-            if (statusResult.IsFailure)
-                throw new InvalidOperationException(statusResult.Error);
-
-            var status =
-                statusResult.Value.FirstOrDefault(s => s.Name == dto.Status)
-                ?? throw new InvalidOperationException($"Invalid status: {dto.Status}");
-
-            entity.StatusId = status.Id;
-            entity.Created = DateTime.UtcNow;
-            Console.WriteLine($"Debug: Set StatusId: {entity.StatusId}");
-
-            // Calculate total price if not set
-            if (entity is { TotalPrice: <= 0, HourlyRate: > 0 })
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                var workDays = (entity.EndDate ?? DateTime.MaxValue) - entity.StartDate;
-                var estimatedHours = workDays.Days * 8; // Assuming 8 hours per day
-                entity.TotalPrice = entity.HourlyRate * estimatedHours;
-                Console.WriteLine($"Debug: Calculated total price: {entity.TotalPrice}");
+                var entity = mapper.Map<ProjectEntity>(dto);
+                Console.WriteLine(
+                    $"Debug: Mapped entity - ProjectManagerId: {entity.ProjectManagerId}, ClientId: {entity.ClientId}"
+                );
+
+                // Generate project number
+                entity.ProjectNumber = await GenerateProjectNumberAsync();
+                Console.WriteLine($"Debug: Generated project number: {entity.ProjectNumber}");
+
+                // Get status by name
+                var statusResult = await statusRepository.GetAllAsync();
+                if (statusResult.IsFailure)
+                    throw new InvalidOperationException(statusResult.Error);
+
+                var status =
+                    statusResult.Value.FirstOrDefault(s => s.Name == dto.Status)
+                    ?? throw new InvalidOperationException($"Invalid status: {dto.Status}");
+
+                entity.StatusId = status.Id;
+                entity.Created = DateTime.UtcNow;
+                Console.WriteLine($"Debug: Set StatusId: {entity.StatusId}");
+
+                // Calculate total price if not set
+                if (entity is { TotalPrice: <= 0, HourlyRate: > 0 })
+                {
+                    var workDays = (entity.EndDate ?? DateTime.MaxValue) - entity.StartDate;
+                    var estimatedHours = workDays.Days * 8; // Assuming 8 hours per day
+                    entity.TotalPrice = entity.HourlyRate * estimatedHours;
+                    Console.WriteLine($"Debug: Calculated total price: {entity.TotalPrice}");
+                }
+
+                Console.WriteLine(
+                    $"Debug: About to add entity - Title: {entity.Title}, ClientId: {entity.ClientId}, ProjectManagerId: {entity.ProjectManagerId}, StatusId: {entity.StatusId}"
+                );
+                var result = await projectRepository.AddAsync(entity);
+                if (result.IsFailure)
+                    throw new InvalidOperationException(result.Error);
+
+                await transaction.CommitAsync();
+                return mapper.Map<ProjectDetailsDto>(result.Value);
             }
-
-            Console.WriteLine(
-                $"Debug: About to add entity - Title: {entity.Title}, ClientId: {entity.ClientId}, ProjectManagerId: {entity.ProjectManagerId}, StatusId: {entity.StatusId}"
-            );
-            var result = await projectRepository.AddAsync(entity);
-            if (result.IsFailure)
-                throw new InvalidOperationException(result.Error);
-
-            return mapper.Map<ProjectDetailsDto>(result.Value);
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
         catch (Exception ex)
         {
@@ -99,34 +113,44 @@ public class ProjectService(
     {
         try
         {
-            // Get the existing project first
-            var existingProject = await projectRepository.GetAllAsync();
-            if (existingProject.IsFailure)
-                throw new InvalidOperationException(existingProject.Error);
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                // Get the existing project first
+                var existingProject = await projectRepository.GetAllAsync();
+                if (existingProject.IsFailure)
+                    throw new InvalidOperationException(existingProject.Error);
 
-            var project =
-                existingProject.Value.FirstOrDefault(p => p.Id == dto.Id)
-                ?? throw new KeyNotFoundException($"Project with ID {dto.Id} not found.");
+                var project =
+                    existingProject.Value.FirstOrDefault(p => p.Id == dto.Id)
+                    ?? throw new KeyNotFoundException($"Project with ID {dto.Id} not found.");
 
-            // Get status by name
-            var statusResult = await statusRepository.GetAllAsync();
-            if (statusResult.IsFailure)
-                throw new InvalidOperationException(statusResult.Error);
+                // Get status by name
+                var statusResult = await statusRepository.GetAllAsync();
+                if (statusResult.IsFailure)
+                    throw new InvalidOperationException(statusResult.Error);
 
-            var status =
-                statusResult.Value.FirstOrDefault(s => s.Name == dto.Status)
-                ?? throw new InvalidOperationException($"Invalid status: {dto.Status}");
+                var status =
+                    statusResult.Value.FirstOrDefault(s => s.Name == dto.Status)
+                    ?? throw new InvalidOperationException($"Invalid status: {dto.Status}");
 
-            // Update the existing entity with new values
-            mapper.Map(dto, project);
-            project.StatusId = status.Id;
-            project.Modified = DateTime.UtcNow;
+                // Update the existing entity with new values
+                mapper.Map(dto, project);
+                project.StatusId = status.Id;
+                project.Modified = DateTime.UtcNow;
 
-            var result = await projectRepository.UpdateAsync(project);
-            if (result.IsFailure)
-                throw new InvalidOperationException(result.Error);
+                var result = await projectRepository.UpdateAsync(project);
+                if (result.IsFailure)
+                    throw new InvalidOperationException(result.Error);
 
-            return mapper.Map<ProjectDetailsDto>(result.Value);
+                await transaction.CommitAsync();
+                return mapper.Map<ProjectDetailsDto>(result.Value);
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
         catch (Exception ex)
         {
