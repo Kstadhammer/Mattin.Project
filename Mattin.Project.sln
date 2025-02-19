@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mattin.Project.Core", "Mattin.Project.Core\Mattin.Project.Core.csproj", "{4666809F-A837-403D-A1BB-9FCD5402D173}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mattin.Project.Infrastructure", "Mattin.Project.Infrastructure\Mattin.Project.Infrastructure.csproj", "{DBDC5ED3-5481-4535-A3F2-F8505A19B121}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mattin.Project.Presentation", "Mattin.Project.Presentation\Mattin.Project.Presentation.csproj", "{3C544DD8-18A5-47BC-AB5C-CECEC1D46CE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4666809F-A837-403D-A1BB-9FCD5402D173}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4666809F-A837-403D-A1BB-9FCD5402D173}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4666809F-A837-403D-A1BB-9FCD5402D173}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4666809F-A837-403D-A1BB-9FCD5402D173}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBDC5ED3-5481-4535-A3F2-F8505A19B121}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBDC5ED3-5481-4535-A3F2-F8505A19B121}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBDC5ED3-5481-4535-A3F2-F8505A19B121}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBDC5ED3-5481-4535-A3F2-F8505A19B121}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C544DD8-18A5-47BC-AB5C-CECEC1D46CE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C544DD8-18A5-47BC-AB5C-CECEC1D46CE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C544DD8-18A5-47BC-AB5C-CECEC1D46CE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C544DD8-18A5-47BC-AB5C-CECEC1D46CE3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
