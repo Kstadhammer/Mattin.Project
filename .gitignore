@@ -13,25 +13,44 @@ out/
 # Rider files
 .idea/
 *.sln.iml
+*.DotSettings.user
 
 # SQLite database files
 *.db
 *.db-shm
 *.db-wal
+Data/
 
 # macOS system files
 .DS_Store
 .AppleDouble
 .LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
 
 # Windows system files
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
 
 # Visual Studio Code
 .vscode/
 .history/
+*.code-workspace
+.ionide/
 
 # NuGet
 *.nupkg
@@ -63,4 +82,19 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
-[Ll]ogs/ 
+[Ll]ogs/
+
+# Visual Studio IntelliCode
+.vs/
+
+# Test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Local History
+.localhistory/ 
