@@ -154,8 +154,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 new Status
                 {
                     Id = 1,
-                    Name = "Ej påbörjat",
-                    Description = "Projektet har inte påbörjats än",
+                    Name = "Not Started",
+                    Description = "Project has not been started yet",
                     IsDefault = true,
                     SortOrder = 1,
                     Created = now,
@@ -163,8 +163,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 new Status
                 {
                     Id = 2,
-                    Name = "Pågående",
-                    Description = "Projektet är under utveckling",
+                    Name = "In Progress",
+                    Description = "Project is under development",
                     IsDefault = false,
                     SortOrder = 2,
                     Created = now,
@@ -172,8 +172,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
                 new Status
                 {
                     Id = 3,
-                    Name = "Avslutat",
-                    Description = "Projektet är färdigt",
+                    Name = "Completed",
+                    Description = "Project is finished",
                     IsDefault = false,
                     SortOrder = 3,
                     Created = now,
