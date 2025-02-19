@@ -1,42 +1,42 @@
 # Mattin Project Management System
 
-A console-based project management system built with .NET 9.0, featuring a clean architecture and modern C# practices.
+A comprehensive project management system developed for Mattin-Lassei Group AB as part of the Data Storage (Datalagring) course at EC Utbildning.
 
-## AI Assistance Acknowledgment
+## Course Information
+- **Course**: Data Storage (Datalagring)
+- **Institution**: EC Utbildning
+- **Assignment**: Project Management System Implementation
+- **Grade Level**: VG (Väl Godkänt)
 
-This project was developed with the assistance of AI tools, which helped with:
-- Architecture design and implementation
-- Database schema and relationships
-- Input validation and error handling
-- Console UI navigation and display
-- Code quality and best practices
+## Project Overview
 
-The AI assistance was primarily used for:
-- Setting up the clean architecture structure
-- Implementing the repository and service patterns
-- Creating the interactive console menu system
-- Configuring Entity Framework with SQLite
-- Adding data validation and error handling
+This project implements a console-based project management system with the following key features:
+- Project tracking with automatic project number generation
+- Client management
+- Project manager assignment
+- Status tracking
+- Budget and timeline management
 
-While AI provided guidance and suggestions, all code was reviewed, tested, and customized to meet the specific requirements of the project.
+### Key Requirements Implemented (VG Level)
 
-## Features
+#### Base Requirements (G)
+- ✅ Frontend application with project listing, creation, and editing
+- ✅ Entity Framework Core - Code First implementation
+- ✅ SQLite database integration
+- ✅ Multiple entities/tables (Projects, Clients, etc.)
+- ✅ Service layer for project and client management
+- ✅ Repository pattern implementation
+- ✅ Dependency Injection
+- ✅ SOLID principles application
 
-- �� Project Management
-  - Create and edit projects
-  - Track project status and progress
-  - Manage project budgets and timelines
-  - Assign project managers
-
-- 👥 Client Management
-  - Maintain client information
-  - Track client projects
-  - Monitor client project values
-
-- 👤 Project Manager Management
-  - Assign managers to projects
-  - Track manager workload
-  - Department-based organization
+#### Advanced Requirements (VG)
+- ✅ Generic BaseClass for repositories
+- ✅ Extended entity model (Clients, Project Managers, Projects, Status)
+- ✅ Comprehensive CRUD operations through services
+- ✅ SOLID principles implementation
+- ✅ Factory pattern utilization
+- ✅ Asynchronous operations with Task/async/await
+- ✅ Transaction management for data consistency
 
 ## Technical Stack
 
@@ -51,9 +51,49 @@ While AI provided guidance and suggestions, all code was reviewed, tested, and c
 ```
 Mattin.Project/
 ├── Mattin.Project.Core/           # Domain entities, interfaces, DTOs
-├── Mattin.Project.Infrastructure/ # Data access, repositories, services
-└── Mattin.Project.Presentation/   # Console UI, menus, user interaction
+│   ├── Common/                    # Shared utilities and patterns
+│   ├── Interfaces/               # Service and repository contracts
+│   ├── Models/                   # Domain models and DTOs
+│   └── Mappings/                # AutoMapper profiles
+├── Mattin.Project.Infrastructure/ # Data access and services
+│   ├── Contexts/                # Database context
+│   ├── Repositories/            # Data access implementation
+│   ├── Services/                # Business logic implementation
+│   └── Factories/              # Object creation patterns
+└── Mattin.Project.Presentation/   # Console UI
+    ├── Helpers/                 # UI utilities
+    └── Menus/                   # Interactive menus
 ```
+
+## Features
+
+### Project Management
+- Create and edit projects
+- Automatic project number generation
+- Status tracking (Not Started, In Progress, Completed)
+- Budget calculation and management
+- Timeline management
+
+### Client Management
+- Client information management
+- Project association
+- Active project tracking
+- Total value calculation
+
+### Project Manager Features
+- Department-based organization
+- Project assignment
+- Workload tracking
+
+## AI Assistance Acknowledgment
+
+This project was developed with AI assistance in the following areas:
+- Architecture design and implementation
+- Clean code practices and SOLID principles
+- Database schema design
+- Transaction management
+- UI/UX improvements
+- Error handling patterns
 
 ## Getting Started
 
@@ -79,7 +119,7 @@ dotnet run --project Mattin.Project.Presentation
 
 ## Database
 
-The application uses SQLite with Entity Framework Core. The database will be automatically created on first run in the application's output directory.
+The application uses SQLite with Entity Framework Core. The database will be automatically created in the `Data` directory on first run.
 
 ## Navigation
 
