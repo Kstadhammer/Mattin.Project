@@ -7,6 +7,10 @@ using Mattin.Project.Core.Models.Entities;
 
 namespace Mattin.Project.Infrastructure.Services;
 
+/// <summary>
+/// Manages client-related operations including project associations.
+/// Handles client data validation and relationship management.
+/// </summary>
 public class ClientService(
     IClientRepository clientRepository,
     IProjectRepository projectRepository,

@@ -1,3 +1,11 @@
+// Project menu implementation enhanced with AI assistance for:
+// - Interactive menu navigation
+// - Project data management
+// - Input validation and error handling
+// - Color-coded user interface
+// - Status management
+// - Budget calculations
+
 using Mattin.Project.Core.Interfaces;
 using Mattin.Project.Core.Interfaces.Factories;
 using Mattin.Project.Core.Models.DTOs.Project;
@@ -6,6 +14,11 @@ using Mattin.Project.Presentation.Menus.Base;
 
 namespace Mattin.Project.Presentation.Menus;
 
+/// <summary>
+/// Handles the project management interface, providing options for
+/// creating, viewing, and editing projects with a user-friendly
+/// color-coded menu system.
+/// </summary>
 public class ProjectMenu : BaseMenu
 {
     private readonly IProjectService _projectService;
@@ -26,15 +39,9 @@ public class ProjectMenu : BaseMenu
         while (running)
         {
             DisplayHeader("Project Management");
-            var options = new[]
-            {
-                "List All Projects",
-                "Create New Project",
-                "Edit Project",
-                "Back to Main Menu",
-            };
+            var options = new[] { "List/Edit Projects", "Create New Project", "Back to Main Menu" };
 
-            var choice = _menuHelper.ShowMenu(options, itemColor: ConsoleColor.Cyan);
+            var choice = _menuHelper.ShowMenu(options, itemColor: ConsoleColor.Yellow);
             switch (choice)
             {
                 case 0:
@@ -44,9 +51,6 @@ public class ProjectMenu : BaseMenu
                     await CreateProjectAsync();
                     break;
                 case 2:
-                    await EditProjectAsync();
-                    break;
-                case 3:
                     running = false;
                     break;
             }
@@ -143,7 +147,8 @@ public class ProjectMenu : BaseMenu
                         var selectedStatus = _menuHelper.SelectFromList(
                             "Statuses",
                             statuses,
-                            status => status
+                            status => status,
+                            ConsoleColor.DarkYellow
                         );
                         dto.Status = selectedStatus;
                         break;
@@ -254,45 +259,6 @@ public class ProjectMenu : BaseMenu
                 innerException = innerException.InnerException;
             }
             DisplayError($"Failed to create project: {message}");
-        }
-    }
-
-    private async Task EditProjectAsync()
-    {
-        DisplayHeader("Edit Project");
-
-        try
-        {
-            var projects = await _projectService.GetAllAsync();
-            var selectedProject = _menuHelper.SelectFromList(
-                "Projects",
-                projects,
-                p => $"{p.Id}: {p.ProjectNumber} - {p.Title}"
-            );
-
-            var dto = new UpdateProjectDto
-            {
-                Id = selectedProject.Id,
-                Title = _menuHelper.GetUserInput("Project Title", true) ?? selectedProject.Title,
-                Description =
-                    _menuHelper.GetUserInput("Description", true) ?? selectedProject.Description,
-                Status =
-                    _menuHelper.GetUserInput("Status (Ej påbörjat/Pågående/Avslutat)", true)
-                    ?? selectedProject.Status,
-                StartDate = _menuHelper.GetDateInput("Start Date"),
-                EndDate = _menuHelper.GetDateInput("End Date"),
-                ProjectManagerId = selectedProject.ProjectManagerId,
-                HourlyRate = _menuHelper.GetDecimalInput("Hourly Rate (kr)"),
-                TotalPrice = _menuHelper.GetDecimalInput("Total Price (kr)", minValue: 0),
-                ClientId = selectedProject.ClientId,
-            };
-
-            var updated = await _projectService.UpdateAsync(dto);
-            DisplaySuccess("Project updated successfully");
-        }
-        catch (Exception ex)
-        {
-            DisplayError($"Failed to update project: {ex.Message}");
         }
     }
 }

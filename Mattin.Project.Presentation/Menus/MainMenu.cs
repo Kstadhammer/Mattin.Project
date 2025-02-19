@@ -1,9 +1,22 @@
+// Main menu implementation enhanced with AI assistance for:
+// - User interface design
+// - Navigation system
+// - Visual effects and animations
+// - Menu structure
+// - Help system integration
+// - Color theme management
+
 using Mattin.Project.Core.Interfaces.Factories;
 using Mattin.Project.Presentation.Helpers;
 using Mattin.Project.Presentation.Menus.Base;
 
 namespace Mattin.Project.Presentation.Menus;
 
+/// <summary>
+/// Main entry point for the application's user interface.
+/// Provides access to all major functionality through an
+/// intuitive menu system with visual enhancements.
+/// </summary>
 public class MainMenu : BaseMenu
 {
     private readonly ProjectMenu _projectMenu;

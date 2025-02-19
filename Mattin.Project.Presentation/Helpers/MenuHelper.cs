@@ -28,13 +28,20 @@ public class MenuHelper
             {
                 if (i == selectedIndex)
                 {
-                    Console.BackgroundColor = ConsoleColor.DarkBlue;
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
                     Console.ForegroundColor = ConsoleColor.White;
                 }
-                else if (itemColor.HasValue)
+                else
                 {
                     Console.ResetColor();
-                    Console.ForegroundColor = itemColor.Value;
+                    if (itemColor.HasValue)
+                    {
+                        Console.ForegroundColor = itemColor.Value;
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                    }
                 }
 
                 Console.WriteLine(options[i]);
@@ -77,7 +84,9 @@ public class MenuHelper
 
         Console.Clear();
         Console.WriteLine($"\nAvailable {title}:");
+        Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine("═".PadRight(Console.WindowWidth - 1, '═'));
+        Console.ResetColor();
 
         // Create display options without extra newlines
         var options = itemsList.Select(item => displaySelector(item)).ToArray();

@@ -66,19 +66,31 @@ public class ClientMenu : BaseMenu
                     return;
                 }
 
+                // Add a null entry for "Back to Main Menu"
+                var clientsList = clients.ToList();
+                clientsList.Add(null!);
+
                 // Display clients as selectable items
                 var selectedClient = _menuHelper.SelectFromList(
                     "Clients",
-                    clients,
+                    clientsList,
                     c =>
-                        $"Client: {c.Name}\n"
-                        + $"  Email: {c.Email}\n"
-                        + $"  Phone: {c.PhoneNumber}\n"
-                        + $"  Address: {c.Address ?? "N/A"}\n"
-                        + $"  Active Projects: {c.ActiveProjectsCount}\n"
-                        + $"  Total Project Value: {c.FormattedTotalProjectValue}",
-                    ConsoleColor.Green
+                        c == null
+                            ? "Back to Main Menu"
+                            : $"Client: {c.Name}\n"
+                                + $"  Email: {c.Email}\n"
+                                + $"  Phone: {c.PhoneNumber}\n"
+                                + $"  Address: {c.Address ?? "N/A"}\n"
+                                + $"  Active Projects: {c.ActiveProjectsCount}\n"
+                                + $"  Total Project Value: {c.FormattedTotalProjectValue}\n",
+                    ConsoleColor.Yellow // Changed from Green to Yellow for better visibility
                 );
+
+                // If "Back to Main Menu" was selected
+                if (selectedClient == null)
+                {
+                    return;
+                }
 
                 // Show edit options for the selected client
                 var editOptions = new[]

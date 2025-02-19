@@ -1,8 +1,10 @@
 // Project service implementation enhanced with AI assistance for:
-// - Automatic project number generation
-// - Status management
-// - Price calculations
-// - Error handling and validation
+// - Automatic project number generation and validation
+// - Transaction management for data consistency
+// - Status tracking and updates
+// - Budget calculations and validations
+// - Error handling and logging
+// - Entity relationships management
 
 using AutoMapper;
 using Mattin.Project.Core.Common;
@@ -14,6 +16,10 @@ using Mattin.Project.Infrastructure.Services.Base;
 
 namespace Mattin.Project.Infrastructure.Services;
 
+/// <summary>
+/// Manages project-related operations with transaction support and validation.
+/// Handles project creation, updates, and status management.
+/// </summary>
 public class ProjectService(
     IProjectRepository projectRepository,
     IStatusRepository statusRepository,
