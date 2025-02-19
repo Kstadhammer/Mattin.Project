@@ -2,6 +2,7 @@
 // Implements clean architecture patterns and service registration
 
 using AutoMapper;
+using Mattin.Project.Core.Factories;
 using Mattin.Project.Core.Interfaces;
 using Mattin.Project.Core.Interfaces.Factories;
 using Mattin.Project.Core.Mappings;
@@ -22,9 +23,20 @@ public static class DependencyInjection
         var assemblyLocation = typeof(DependencyInjection).Assembly.Location;
         var assemblyDirectory = Path.GetDirectoryName(assemblyLocation)!;
 
-        // Navigate up to solution root (3 levels up from bin/Debug/net9.0)
-        var solutionDir = Path.GetFullPath(Path.Combine(assemblyDirectory, "../../.."));
+        // Get the solution root directory
+        var currentDirectory = Directory.GetCurrentDirectory();
+        var solutionDir = Path.GetFullPath(Path.Combine(currentDirectory, ".."));
+        while (!File.Exists(Path.Combine(solutionDir, "Mattin.Project.sln")))
+        {
+            solutionDir = Path.GetFullPath(Path.Combine(solutionDir, ".."));
+            if (solutionDir == Path.GetPathRoot(solutionDir))
+            {
+                throw new InvalidOperationException("Could not find solution root directory.");
+            }
+        }
+
         var dataDir = Path.Combine(solutionDir, "Data");
+        Console.WriteLine($"Solution directory: {solutionDir}"); // Debug line
 
         // Create the directory if it doesn't exist
         if (!Directory.Exists(dataDir))
@@ -46,6 +58,7 @@ public static class DependencyInjection
             cfg.AddProfile<ProjectMappingProfile>();
             cfg.AddProfile<ClientMappingProfile>();
             cfg.AddProfile<ProjectManagerMappingProfile>();
+            cfg.AddProfile<ServiceMappingProfile>();
         });
 
         // Repositories
@@ -53,20 +66,23 @@ public static class DependencyInjection
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IStatusRepository, StatusRepository>();
         services.AddScoped<IProjectManagerRepository, ProjectManagerRepository>();
+        services.AddScoped<IServiceRepository, ServiceRepository>();
 
         // Services
         services.AddScoped<IProjectService>(sp => new ProjectService(
             sp.GetRequiredService<IProjectRepository>(),
             sp.GetRequiredService<IStatusRepository>(),
-            sp.GetRequiredService<IMapper>(),
+            sp.GetRequiredService<IMappingFactory>(),
             sp.GetRequiredService<ApplicationDbContext>()
         ));
         services.AddScoped<IClientService, ClientService>();
         services.AddScoped<IProjectManagerService, ProjectManagerService>();
+        services.AddScoped<IServiceService, ServiceService>();
 
         // Factories
         services.AddScoped<IRepositoryFactory, RepositoryFactory>();
         services.AddScoped<IServiceFactory, ServiceFactory>();
+        services.AddScoped<IMappingFactory, MappingFactory>();
 
         return services;
     }

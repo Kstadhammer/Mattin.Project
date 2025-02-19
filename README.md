@@ -94,6 +94,10 @@ This project was developed with AI assistance in the following areas:
 - Transaction management
 - UI/UX improvements
 - Error handling patterns
+- Comprehensive code documentation and comments
+- Factory pattern implementations
+- Repository and service layer design
+- Data mapping strategies
 
 ## Getting Started
 
@@ -129,4 +133,4 @@ The application uses SQLite with Entity Framework Core. The database will be aut
 
 ## License
 
-MIT License 
+MIT License

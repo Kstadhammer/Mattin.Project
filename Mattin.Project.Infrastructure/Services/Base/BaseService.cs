@@ -1,4 +1,4 @@
-// Base service implementation developed with AI assistance for:
+// Base service implementation enhanced with AI assistance for:
 // - Generic CRUD operations
 // - Error handling patterns
 // - Repository integration
@@ -10,6 +10,9 @@ using Mattin.Project.Core.Models.Entities;
 
 namespace Mattin.Project.Infrastructure.Services.Base;
 
+/// <summary>
+/// Base service providing common CRUD operations and error handling for all services.
+/// </summary>
 public abstract class BaseService<TEntity>(IBaseRepository<TEntity> repository)
     : IBaseService<TEntity>
     where TEntity : BaseEntity
@@ -20,7 +23,9 @@ public abstract class BaseService<TEntity>(IBaseRepository<TEntity> repository)
     {
         var result = await _repository.GetAllAsync();
         if (result.IsFailure)
-            throw new InvalidOperationException(result.Error);
+            throw new InvalidOperationException(
+                $"Failed to retrieve {typeof(TEntity).Name} entities: {result.Error}"
+            );
 
         return result.Value;
     }
@@ -29,7 +34,9 @@ public abstract class BaseService<TEntity>(IBaseRepository<TEntity> repository)
     {
         var result = await _repository.GetAllAsync();
         if (result.IsFailure)
-            throw new InvalidOperationException(result.Error);
+            throw new InvalidOperationException(
+                $"Failed to retrieve {typeof(TEntity).Name} with ID {id}: {result.Error}"
+            );
 
         return result.Value.FirstOrDefault(e => e.Id == id);
     }
@@ -38,7 +45,9 @@ public abstract class BaseService<TEntity>(IBaseRepository<TEntity> repository)
     {
         var result = await _repository.AddAsync(entity);
         if (result.IsFailure)
-            throw new InvalidOperationException(result.Error);
+            throw new InvalidOperationException(
+                $"Failed to create {typeof(TEntity).Name}: {result.Error}"
+            );
 
         return result.Value;
     }
@@ -47,29 +56,45 @@ public abstract class BaseService<TEntity>(IBaseRepository<TEntity> repository)
     {
         var existsResult = await _repository.GetAllAsync();
         if (existsResult.IsFailure)
-            throw new InvalidOperationException(existsResult.Error);
+            throw new InvalidOperationException(
+                $"Failed to verify existence of {typeof(TEntity).Name}: {existsResult.Error}"
+            );
 
         if (existsResult.Value.All(e => e.Id != entity.Id))
-            throw new KeyNotFoundException($"Entity with ID {entity.Id} not found.");
+            throw new KeyNotFoundException(
+                $"{typeof(TEntity).Name} with ID {entity.Id} not found."
+            );
 
         var result = await _repository.UpdateAsync(entity);
         if (result.IsFailure)
-            throw new InvalidOperationException(result.Error);
+            throw new InvalidOperationException(
+                $"Failed to update {typeof(TEntity).Name}: {result.Error}"
+            );
 
         return result.Value;
     }
 
     public virtual async Task<bool> DeleteAsync(int id)
     {
-        var result = await _repository.DeleteAsync(id);
-        return result.IsSuccess;
+        var result = await _repository.GetAllAsync();
+        if (result.IsFailure)
+            throw new InvalidOperationException($"Failed to retrieve entity: {result.Error}");
+
+        var entity = result.Value.FirstOrDefault(e => e.Id == id);
+        if (entity == null)
+            return false;
+
+        var deleteResult = await _repository.DeleteAsync(entity);
+        return deleteResult.IsSuccess;
     }
 
     public virtual async Task<bool> ExistsAsync(int id)
     {
         var result = await _repository.GetAllAsync();
         if (result.IsFailure)
-            throw new InvalidOperationException(result.Error);
+            throw new InvalidOperationException(
+                $"Failed to check existence of {typeof(TEntity).Name} with ID {id}: {result.Error}"
+            );
 
         return result.Value.Any(e => e.Id == id);
     }

@@ -46,4 +46,7 @@ public class ProjectEntity : BaseEntity
     [Required]
     public int ProjectManagerId { get; set; }
     public ProjectManager ProjectManager { get; set; } = null!;
+
+    public int? ServiceId { get; set; }
+    public Service? Service { get; set; }
 }

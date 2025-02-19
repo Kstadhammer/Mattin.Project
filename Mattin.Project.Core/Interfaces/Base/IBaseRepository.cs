@@ -2,7 +2,7 @@ using Mattin.Project.Core.Common;
 
 namespace Mattin.Project.Core.Interfaces.Base;
 
-public interface IBaseRepository<TEntity>
+public interface IBaseRepository<TEntity> : IDisposable, IAsyncDisposable
     where TEntity : class
 {
     Task<Result<IEnumerable<TEntity>>> GetAllAsync(CancellationToken cancellationToken = default);
@@ -11,5 +11,5 @@ public interface IBaseRepository<TEntity>
         TEntity entity,
         CancellationToken cancellationToken = default
     );
-    Task<Result> DeleteAsync(int id, CancellationToken cancellationToken = default);
+    Task<Result> DeleteAsync(TEntity entity, CancellationToken cancellationToken = default);
 }

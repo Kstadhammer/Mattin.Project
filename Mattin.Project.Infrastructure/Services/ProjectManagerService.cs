@@ -1,4 +1,12 @@
-using AutoMapper;
+// Project manager service implementation enhanced with AI assistance for:
+// - Project manager data operations
+// - DTO mapping and transformations
+// - Error handling and validation
+// - Base service functionality inheritance
+// - Relationship management with projects
+
+using Mattin.Project.Core.Common;
+using Mattin.Project.Core.Factories;
 using Mattin.Project.Core.Interfaces;
 using Mattin.Project.Core.Models.DTOs.ProjectManager;
 using Mattin.Project.Core.Models.Entities;
@@ -8,34 +16,48 @@ namespace Mattin.Project.Infrastructure.Services;
 
 public class ProjectManagerService(
     IProjectManagerRepository projectManagerRepository,
-    IMapper mapper
+    IMappingFactory mappingFactory
 ) : BaseService<ProjectManager>(projectManagerRepository), IProjectManagerService
 {
-    public async Task<IEnumerable<ProjectManagerDetailsDto>> GetAllAsync()
+    public async Task<Result<IEnumerable<ProjectManagerDetailsDto>>> GetAllAsync(
+        CancellationToken cancellationToken = default
+    )
     {
-        var result = await projectManagerRepository.GetAllAsync();
+        var result = await projectManagerRepository.GetAllAsync(cancellationToken);
         if (result.IsFailure)
-            throw new InvalidOperationException(result.Error);
+            return Result<IEnumerable<ProjectManagerDetailsDto>>.Failure(result.Error);
 
-        return mapper.Map<IEnumerable<ProjectManagerDetailsDto>>(result.Value);
+        return Result<IEnumerable<ProjectManagerDetailsDto>>.Success(
+            mappingFactory.CreateProjectManagerDetailsDtos(result.Value)
+        );
     }
 
-    public async Task<ProjectManagerDetailsDto?> GetByIdAsync(int id)
+    public async Task<Result<ProjectManagerDetailsDto?>> GetByIdAsync(
+        int id,
+        CancellationToken cancellationToken = default
+    )
     {
-        var result = await projectManagerRepository.GetAllAsync();
+        var result = await projectManagerRepository.GetAllAsync(cancellationToken);
         if (result.IsFailure)
-            throw new InvalidOperationException(result.Error);
+            return Result<ProjectManagerDetailsDto?>.Failure(result.Error);
 
         var projectManager = result.Value.FirstOrDefault(p => p.Id == id);
-        return mapper.Map<ProjectManagerDetailsDto>(projectManager);
+        return Result<ProjectManagerDetailsDto?>.Success(
+            projectManager == null
+                ? null
+                : mappingFactory.CreateProjectManagerDetailsDto(projectManager)
+        );
     }
 
-    public async Task<bool> ExistsAsync(int id)
+    public async Task<Result<bool>> ExistsAsync(
+        int id,
+        CancellationToken cancellationToken = default
+    )
     {
-        var result = await projectManagerRepository.GetAllAsync();
+        var result = await projectManagerRepository.GetAllAsync(cancellationToken);
         if (result.IsFailure)
-            throw new InvalidOperationException(result.Error);
+            return Result<bool>.Failure(result.Error);
 
-        return result.Value.Any(p => p.Id == id);
+        return Result<bool>.Success(result.Value.Any(p => p.Id == id));
     }
 }

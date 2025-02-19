@@ -17,17 +17,11 @@ namespace Mattin.Project.Presentation.Menus;
 /// Provides access to all major functionality through an
 /// intuitive menu system with visual enhancements.
 /// </summary>
-public class MainMenu : BaseMenu
+public class MainMenu(IServiceFactory serviceFactory) : BaseMenu(serviceFactory)
 {
-    private readonly ProjectMenu _projectMenu;
-    private readonly ClientMenu _clientMenu;
-
-    public MainMenu(IServiceFactory serviceFactory)
-        : base(serviceFactory)
-    {
-        _projectMenu = new ProjectMenu(serviceFactory);
-        _clientMenu = new ClientMenu(serviceFactory);
-    }
+    private readonly ProjectMenu _projectMenu = new(serviceFactory);
+    private readonly ClientMenu _clientMenu = new(serviceFactory);
+    private readonly ServiceMenu _serviceMenu = new(serviceFactory);
 
     public override async Task ShowAsync()
     {
@@ -41,6 +35,7 @@ public class MainMenu : BaseMenu
             {
                 "Client Management",
                 "Project Management",
+                "Service Management",
                 "✨ Surprise!",
                 "Exit",
             };
@@ -58,9 +53,12 @@ public class MainMenu : BaseMenu
                     await _projectMenu.ShowAsync();
                     break;
                 case 2:
-                    LogoHelper.DisplayMatrixEffect();
+                    await _serviceMenu.ShowAsync();
                     break;
                 case 3:
+                    LogoHelper.DisplayMatrixEffect();
+                    break;
+                case 4:
                     running = false;
                     break;
             }
@@ -96,6 +94,14 @@ public class MainMenu : BaseMenu
         Console.WriteLine("  • Create new clients");
         Console.WriteLine("  • Edit client information");
         Console.WriteLine("  • View client's projects and total value\n");
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine("  Service Management Features:");
+        Console.ResetColor();
+        Console.WriteLine("  • View all services and their details");
+        Console.WriteLine("  • Create new services");
+        Console.WriteLine("  • Edit service information");
+        Console.WriteLine("  • Manage service categories and pricing\n");
 
         Console.ForegroundColor = ConsoleColor.Gray;
         Console.WriteLine("\n  Press any key to return to main menu...");

@@ -4,13 +4,16 @@ using Mattin.Project.Core.Models.Entities;
 
 namespace Mattin.Project.Core.Interfaces;
 
-public interface IClientRepository : IBaseRepository<Client>
+public interface IServiceRepository : IBaseRepository<Service>
 {
-    Task<Result<Client?>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<Result<Service?>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<Result<bool>> ExistsAsync(int id, CancellationToken cancellationToken = default);
     Task<Result> DeleteByIdAsync(int id, CancellationToken cancellationToken = default);
-    Task<Result<IEnumerable<Client>>> GetClientsByNameAsync(
-        string name,
+    Task<Result<IEnumerable<Service>>> GetServicesByCategoryAsync(
+        string category,
+        CancellationToken cancellationToken = default
+    );
+    Task<Result<IEnumerable<Service>>> GetActiveServicesAsync(
         CancellationToken cancellationToken = default
     );
 }

@@ -57,7 +57,7 @@ namespace Mattin.Project.Infrastructure.Migrations
                         {
                             Id = 1,
                             Address = "Kungsgatan 1, 111 43 Stockholm",
-                            Created = new DateTime(2025, 2, 19, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             Email = "info@mattin-lassei.se",
                             Name = "Mattin-Lassei Group AB",
                             PhoneNumber = "08-123 45 67"
@@ -66,7 +66,7 @@ namespace Mattin.Project.Infrastructure.Migrations
                         {
                             Id = 2,
                             Address = "Sveavägen 10, 111 57 Stockholm",
-                            Created = new DateTime(2025, 2, 19, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             Email = "contact@techinnovators.se",
                             Name = "Tech Innovators AB",
                             PhoneNumber = "08-987 65 43"
@@ -107,6 +107,9 @@ namespace Mattin.Project.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
+                    b.Property<int?>("ServiceId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("TEXT");
 
@@ -128,6 +131,8 @@ namespace Mattin.Project.Infrastructure.Migrations
 
                     b.HasIndex("ProjectManagerId");
 
+                    b.HasIndex("ServiceId");
+
                     b.HasIndex("StatusId");
 
                     b.ToTable("Projects");
@@ -137,13 +142,14 @@ namespace Mattin.Project.Infrastructure.Migrations
                         {
                             Id = 1,
                             ClientId = 1,
-                            Created = new DateTime(2025, 2, 19, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             Description = "Komplett redesign av företagets webbplats med fokus på användarupplevelse",
-                            EndDate = new DateTime(2025, 4, 20, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            EndDate = new DateTime(2025, 4, 20, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             HourlyRate = 1200m,
                             ProjectManagerId = 1,
                             ProjectNumber = "2024-001",
-                            StartDate = new DateTime(2025, 1, 20, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            ServiceId = 1,
+                            StartDate = new DateTime(2025, 1, 20, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             StatusId = 2,
                             Title = "Webbplats Redesign",
                             TotalPrice = 480000m
@@ -152,13 +158,14 @@ namespace Mattin.Project.Infrastructure.Migrations
                         {
                             Id = 2,
                             ClientId = 2,
-                            Created = new DateTime(2025, 2, 19, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             Description = "Utveckling av ny e-handelsplattform med integration mot befintliga system",
-                            EndDate = new DateTime(2025, 6, 4, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            EndDate = new DateTime(2025, 6, 4, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             HourlyRate = 1100m,
                             ProjectManagerId = 2,
                             ProjectNumber = "2024-002",
-                            StartDate = new DateTime(2025, 3, 6, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            ServiceId = 1,
+                            StartDate = new DateTime(2025, 3, 6, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             StatusId = 1,
                             Title = "E-handelsplattform",
                             TotalPrice = 880000m
@@ -167,13 +174,14 @@ namespace Mattin.Project.Infrastructure.Migrations
                         {
                             Id = 3,
                             ClientId = 1,
-                            Created = new DateTime(2025, 2, 19, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             Description = "Utveckling av mobilapp för intern kommunikation",
-                            EndDate = new DateTime(2025, 4, 5, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            EndDate = new DateTime(2025, 4, 5, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             HourlyRate = 1300m,
                             ProjectManagerId = 3,
                             ProjectNumber = "2024-003",
-                            StartDate = new DateTime(2025, 2, 4, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            ServiceId = 2,
+                            StartDate = new DateTime(2025, 2, 4, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             StatusId = 2,
                             Title = "App-utveckling",
                             TotalPrice = 416000m
@@ -224,7 +232,7 @@ namespace Mattin.Project.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2025, 2, 19, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             Department = "Development",
                             Email = "anna.andersson@mattin-lassei.se",
                             IsActive = true,
@@ -234,7 +242,7 @@ namespace Mattin.Project.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            Created = new DateTime(2025, 2, 19, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             Department = "Design",
                             Email = "erik.eriksson@mattin-lassei.se",
                             IsActive = true,
@@ -244,12 +252,124 @@ namespace Mattin.Project.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            Created = new DateTime(2025, 2, 19, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             Department = "Mobile Development",
                             Email = "maria.nilsson@mattin-lassei.se",
                             IsActive = true,
                             Name = "Maria Nilsson",
                             PhoneNumber = "070-345 67 89"
+                        });
+                });
+
+            modelBuilder.Entity("Mattin.Project.Core.Models.Entities.Service", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("BasePrice")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Category")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("HourlyRate")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime?>("Modified")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Services");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BasePrice = 50000m,
+                            Category = "Development",
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
+                            Description = "Full-stack web development services including frontend and backend",
+                            HourlyRate = 1200m,
+                            IsActive = true,
+                            Name = "Web Development"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BasePrice = 75000m,
+                            Category = "Development",
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
+                            Description = "Native and cross-platform mobile application development",
+                            HourlyRate = 1300m,
+                            IsActive = true,
+                            Name = "Mobile App Development"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BasePrice = 35000m,
+                            Category = "Design",
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
+                            Description = "User interface and experience design for digital products",
+                            HourlyRate = 1100m,
+                            IsActive = true,
+                            Name = "UI/UX Design"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BasePrice = 65000m,
+                            Category = "Infrastructure",
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
+                            Description = "Setup and management of cloud infrastructure and DevOps practices",
+                            HourlyRate = 1400m,
+                            IsActive = true,
+                            Name = "Cloud Infrastructure"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            BasePrice = 45000m,
+                            Category = "Security",
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
+                            Description = "Comprehensive security assessment and penetration testing",
+                            HourlyRate = 1500m,
+                            IsActive = true,
+                            Name = "Security Audit"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            BasePrice = 55000m,
+                            Category = "Analytics",
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
+                            Description = "Business intelligence and data analytics solutions",
+                            HourlyRate = 1250m,
+                            IsActive = true,
+                            Name = "Data Analytics"
                         });
                 });
 
@@ -293,7 +413,7 @@ namespace Mattin.Project.Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2025, 2, 19, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             Description = "Projektet har inte påbörjats än",
                             IsDefault = true,
                             Name = "Ej påbörjat",
@@ -302,7 +422,7 @@ namespace Mattin.Project.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            Created = new DateTime(2025, 2, 19, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             Description = "Projektet är under utveckling",
                             IsDefault = false,
                             Name = "Pågående",
@@ -311,7 +431,7 @@ namespace Mattin.Project.Infrastructure.Migrations
                         new
                         {
                             Id = 3,
-                            Created = new DateTime(2025, 2, 19, 13, 31, 1, 25, DateTimeKind.Utc).AddTicks(6860),
+                            Created = new DateTime(2025, 2, 19, 20, 8, 36, 93, DateTimeKind.Utc).AddTicks(5600),
                             Description = "Projektet är färdigt",
                             IsDefault = false,
                             Name = "Avslutat",
@@ -333,6 +453,11 @@ namespace Mattin.Project.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Mattin.Project.Core.Models.Entities.Service", "Service")
+                        .WithMany("Projects")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("Mattin.Project.Core.Models.Entities.Status", "Status")
                         .WithMany("Projects")
                         .HasForeignKey("StatusId")
@@ -343,6 +468,8 @@ namespace Mattin.Project.Infrastructure.Migrations
 
                     b.Navigation("ProjectManager");
 
+                    b.Navigation("Service");
+
                     b.Navigation("Status");
                 });
 
@@ -352,6 +479,11 @@ namespace Mattin.Project.Infrastructure.Migrations
                 });
 
             modelBuilder.Entity("Mattin.Project.Core.Models.Entities.ProjectManager", b =>
+                {
+                    b.Navigation("Projects");
+                });
+
+            modelBuilder.Entity("Mattin.Project.Core.Models.Entities.Service", b =>
                 {
                     b.Navigation("Projects");
                 });

@@ -5,47 +5,44 @@
 // - Cross-cutting concerns
 
 using AutoMapper;
+using Mattin.Project.Core.Factories;
 using Mattin.Project.Core.Interfaces;
 using Mattin.Project.Core.Interfaces.Factories;
 using Mattin.Project.Infrastructure.Contexts;
+using Mattin.Project.Infrastructure.Repositories;
 using Mattin.Project.Infrastructure.Services;
 
 namespace Mattin.Project.Infrastructure.Factories;
 
-public class ServiceFactory : IServiceFactory
+public class ServiceFactory(
+    IRepositoryFactory repositoryFactory,
+    IMappingFactory mappingFactory,
+    ApplicationDbContext context
+) : IServiceFactory
 {
-    private readonly IRepositoryFactory _repositoryFactory;
-    private readonly IMapper _mapper;
-    private readonly ApplicationDbContext _context;
-
-    public ServiceFactory(
-        IRepositoryFactory repositoryFactory,
-        IMapper mapper,
-        ApplicationDbContext context
-    )
-    {
-        _repositoryFactory = repositoryFactory;
-        _mapper = mapper;
-        _context = context;
-    }
-
     public IProjectService CreateProjectService()
     {
-        var projectRepository = _repositoryFactory.CreateProjectRepository();
-        var statusRepository = _repositoryFactory.CreateStatusRepository();
-        return new ProjectService(projectRepository, statusRepository, _mapper, _context);
+        var projectRepository = repositoryFactory.CreateProjectRepository();
+        var statusRepository = repositoryFactory.CreateStatusRepository();
+        return new ProjectService(projectRepository, statusRepository, mappingFactory, context);
     }
 
     public IClientService CreateClientService()
     {
-        var clientRepository = _repositoryFactory.CreateClientRepository();
-        var projectRepository = _repositoryFactory.CreateProjectRepository();
-        return new ClientService(clientRepository, projectRepository, _mapper);
+        var clientRepository = repositoryFactory.CreateClientRepository();
+        var projectRepository = repositoryFactory.CreateProjectRepository();
+        return new ClientService(clientRepository, projectRepository, mappingFactory);
     }
 
     public IProjectManagerService CreateProjectManagerService()
     {
-        var projectManagerRepository = _repositoryFactory.CreateProjectManagerRepository();
-        return new ProjectManagerService(projectManagerRepository, _mapper);
+        var projectManagerRepository = repositoryFactory.CreateProjectManagerRepository();
+        return new ProjectManagerService(projectManagerRepository, mappingFactory);
+    }
+
+    public IServiceService CreateServiceService()
+    {
+        var serviceRepository = repositoryFactory.CreateServiceRepository();
+        return new ServiceService(serviceRepository, mappingFactory);
     }
 }

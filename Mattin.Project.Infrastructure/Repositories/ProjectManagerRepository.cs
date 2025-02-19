@@ -1,3 +1,9 @@
+// Repository implementation enhanced with AI assistance for:
+// - Project manager data access and persistence
+// - Relationship management with projects
+// - Error handling and validation
+// - Eager loading of related entities
+
 using Mattin.Project.Core.Common;
 using Mattin.Project.Core.Interfaces;
 using Mattin.Project.Core.Models.Entities;

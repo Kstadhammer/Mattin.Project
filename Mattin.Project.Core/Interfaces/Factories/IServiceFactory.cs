@@ -7,4 +7,5 @@ public interface IServiceFactory
     IProjectService CreateProjectService();
     IClientService CreateClientService();
     IProjectManagerService CreateProjectManagerService();
+    IServiceService CreateServiceService();
 }

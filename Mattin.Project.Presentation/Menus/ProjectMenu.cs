@@ -19,19 +19,12 @@ namespace Mattin.Project.Presentation.Menus;
 /// creating, viewing, and editing projects with a user-friendly
 /// color-coded menu system.
 /// </summary>
-public class ProjectMenu : BaseMenu
+public class ProjectMenu(IServiceFactory serviceFactory) : BaseMenu(serviceFactory)
 {
-    private readonly IProjectService _projectService;
-    private readonly IClientService _clientService;
-    private readonly IProjectManagerService _projectManagerService;
-
-    public ProjectMenu(IServiceFactory serviceFactory)
-        : base(serviceFactory)
-    {
-        _projectService = serviceFactory.CreateProjectService();
-        _clientService = serviceFactory.CreateClientService();
-        _projectManagerService = serviceFactory.CreateProjectManagerService();
-    }
+    private readonly IProjectService _projectService = serviceFactory.CreateProjectService();
+    private readonly IClientService _clientService = serviceFactory.CreateClientService();
+    private readonly IProjectManagerService _projectManagerService =
+        serviceFactory.CreateProjectManagerService();
 
     public override async Task ShowAsync()
     {
@@ -62,8 +55,14 @@ public class ProjectMenu : BaseMenu
         while (true)
         {
             DisplayHeader("All Projects");
-            var projects = await _projectService.GetAllAsync();
+            var projectsResult = await _projectService.GetAllAsync();
+            if (projectsResult.IsFailure)
+            {
+                DisplayError(projectsResult.Error);
+                return;
+            }
 
+            var projects = projectsResult.Value;
             if (!projects.Any())
             {
                 Console.WriteLine("No projects found.");
@@ -90,13 +89,9 @@ public class ProjectMenu : BaseMenu
                 ConsoleColor.Yellow
             );
 
-            // If "Back to Main Menu" was selected
             if (selectedProject == null)
-            {
                 return;
-            }
 
-            // Show edit options for the selected project
             var editOptions = new[]
             {
                 "Edit Title",
@@ -107,10 +102,12 @@ public class ProjectMenu : BaseMenu
                 "Edit Hourly Rate",
                 "Edit Total Price",
                 "Back to Projects List",
-                "Exit to Menu",
             };
 
             var choice = _menuHelper.ShowMenu(editOptions, itemColor: ConsoleColor.Green);
+
+            if (choice == 7) // Back to list
+                continue;
 
             try
             {
@@ -165,16 +162,15 @@ public class ProjectMenu : BaseMenu
                     case 6: // Total Price
                         dto.TotalPrice = _menuHelper.GetDecimalInput("New Total Price (kr)");
                         break;
-                    case 7: // Back to list
-                        continue;
-                    case 8: // Exit
-                        return;
                 }
 
                 if (choice < 7) // Only update if an edit option was selected
                 {
-                    await _projectService.UpdateAsync(dto);
-                    DisplaySuccess("Project updated successfully");
+                    var updateResult = await _projectService.UpdateAsync(dto);
+                    if (updateResult.IsFailure)
+                        DisplayError(updateResult.Error);
+                    else
+                        DisplaySuccess("Project updated successfully");
                 }
             }
             catch (Exception ex)
@@ -191,19 +187,38 @@ public class ProjectMenu : BaseMenu
         try
         {
             // Get and select client
-            var clients = await _clientService.GetAllAsync();
+            var clientsResult = await _clientService.GetAllAsync();
+            if (clientsResult.IsFailure)
+            {
+                DisplayError(clientsResult.Error);
+                return;
+            }
+
+            // Add a null entry for "Back to Main Menu"
+            var clientsList = clientsResult.Value.ToList();
+            clientsList.Add(null!);
+
             var selectedClient = _menuHelper.SelectFromList(
                 "Clients",
-                clients,
-                client => $"{client.Id}: {client.Name}",
+                clientsList,
+                client => client == null ? "Back to Main Menu" : $"{client.Id}: {client.Name}",
                 ConsoleColor.Green
             );
 
+            if (selectedClient == null)
+                return;
+
             // Get and select project manager
-            var projectManagers = await _projectManagerService.GetAllAsync();
+            var managersResult = await _projectManagerService.GetAllAsync();
+            if (managersResult.IsFailure)
+            {
+                DisplayError(managersResult.Error);
+                return;
+            }
+
             var selectedManager = _menuHelper.SelectFromList(
                 "Project Managers",
-                projectManagers,
+                managersResult.Value,
                 pm => $"{pm.Id}: {pm.Name} ({pm.Department})",
                 ConsoleColor.Magenta
             );
@@ -230,7 +245,6 @@ public class ProjectMenu : BaseMenu
             var hourlyRate = _menuHelper.GetDecimalInput("Hourly Rate (kr)");
             var totalPrice = _menuHelper.GetDecimalInput("Total Price (kr)", minValue: 0);
 
-            // Create the DTO with all required fields
             var dto = new CreateProjectDto
             {
                 Title = title,
@@ -244,21 +258,17 @@ public class ProjectMenu : BaseMenu
                 Status = selectedStatus,
             };
 
-            // Create the project
-            var project = await _projectService.CreateAsync(dto);
-            DisplaySuccess($"Project created successfully with number: {project.ProjectNumber}");
+            var createResult = await _projectService.CreateAsync(dto);
+            if (createResult.IsFailure)
+                DisplayError(createResult.Error);
+            else
+                DisplaySuccess(
+                    $"Project created successfully with number: {createResult.Value.ProjectNumber}"
+                );
         }
         catch (Exception ex)
         {
-            // Get the innermost exception message for more details
-            var message = ex.Message;
-            var innerException = ex.InnerException;
-            while (innerException != null)
-            {
-                message = innerException.Message;
-                innerException = innerException.InnerException;
-            }
-            DisplayError($"Failed to create project: {message}");
+            DisplayError($"Failed to create project: {ex.Message}");
         }
     }
 }

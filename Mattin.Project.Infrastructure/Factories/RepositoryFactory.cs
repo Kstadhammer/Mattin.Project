@@ -1,3 +1,10 @@
+// Repository factory implementation enhanced with AI assistance for:
+// - Centralized repository creation
+// - Database context management
+// - Dependency injection support
+// - Repository lifecycle management
+// - Clean architecture pattern implementation
+
 using Mattin.Project.Core.Interfaces;
 using Mattin.Project.Core.Interfaces.Factories;
 using Mattin.Project.Infrastructure.Contexts;
@@ -25,5 +32,10 @@ public class RepositoryFactory(ApplicationDbContext context) : IRepositoryFactor
     public IProjectManagerRepository CreateProjectManagerRepository()
     {
         return new ProjectManagerRepository(context);
+    }
+
+    public IServiceRepository CreateServiceRepository()
+    {
+        return new ServiceRepository(context);
     }
 }

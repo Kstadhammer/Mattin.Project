@@ -15,10 +15,10 @@ public class Result
     protected Result(bool isSuccess, string error)
     {
         if (isSuccess && !string.IsNullOrEmpty(error))
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("A success result cannot have an error message.");
 
         if (!isSuccess && string.IsNullOrEmpty(error))
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("A failure result must have an error message.");
 
         IsSuccess = isSuccess;
         Error = error;
@@ -32,7 +32,10 @@ public class Result
 public class Result<T> : Result
 {
     private readonly T? _value;
-    public T Value => IsSuccess ? _value! : throw new InvalidOperationException();
+    public T Value =>
+        IsSuccess
+            ? _value!
+            : throw new InvalidOperationException("Cannot access the value of a failed result.");
 
     protected Result(T value, bool isSuccess, string error)
         : base(isSuccess, error)

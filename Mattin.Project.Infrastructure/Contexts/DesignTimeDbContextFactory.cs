@@ -7,13 +7,20 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<Applicatio
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {
-        // Get the current assembly location
-        var assemblyLocation = typeof(DesignTimeDbContextFactory).Assembly.Location;
-        var assemblyDirectory = Path.GetDirectoryName(assemblyLocation)!;
+        // Get the solution root directory
+        var currentDirectory = Directory.GetCurrentDirectory();
+        var solutionDir = Path.GetFullPath(Path.Combine(currentDirectory, ".."));
+        while (!File.Exists(Path.Combine(solutionDir, "Mattin.Project.sln")))
+        {
+            solutionDir = Path.GetFullPath(Path.Combine(solutionDir, ".."));
+            if (solutionDir == Path.GetPathRoot(solutionDir))
+            {
+                throw new InvalidOperationException("Could not find solution root directory.");
+            }
+        }
 
-        // Navigate up to solution root (3 levels up from bin/Debug/net9.0)
-        var solutionDir = Path.GetFullPath(Path.Combine(assemblyDirectory, "../../.."));
         var dataDir = Path.Combine(solutionDir, "Data");
+        Console.WriteLine($"Solution directory: {solutionDir}"); // Debug line
 
         // Create the directory if it doesn't exist
         if (!Directory.Exists(dataDir))

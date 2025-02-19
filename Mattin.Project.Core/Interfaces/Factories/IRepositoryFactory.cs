@@ -1,3 +1,4 @@
+using Mattin.Project.Core.Interfaces;
 using Mattin.Project.Core.Interfaces.Base;
 
 namespace Mattin.Project.Core.Interfaces.Factories;
@@ -8,4 +9,5 @@ public interface IRepositoryFactory
     IClientRepository CreateClientRepository();
     IStatusRepository CreateStatusRepository();
     IProjectManagerRepository CreateProjectManagerRepository();
+    IServiceRepository CreateServiceRepository();
 }

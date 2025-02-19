@@ -4,6 +4,7 @@
 // - Error handling and logging
 // - Transaction management
 // - Performance optimization
+// - Refactoring for better readability and maintainability
 
 using Mattin.Project.Core.Common;
 using Mattin.Project.Core.Interfaces.Base;
@@ -13,17 +14,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mattin.Project.Infrastructure.Repositories.Base;
 
-public abstract class BaseRepository<TEntity>(ApplicationDbContext context)
-    : IBaseRepository<TEntity>
+public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>
     where TEntity : BaseEntity
 {
-    protected readonly ApplicationDbContext _context = context;
-    protected readonly DbSet<TEntity> _entities = context.Set<TEntity>();
+    private bool _disposed;
+    protected readonly ApplicationDbContext _context;
+    protected readonly DbSet<TEntity> _entities;
+
+    protected BaseRepository(ApplicationDbContext context)
+    {
+        _context = context;
+        _entities = context.Set<TEntity>();
+    }
+
+    protected Result CheckDisposed()
+    {
+        return _disposed ? Result.Failure("Repository has been disposed.") : Result.Success();
+    }
 
     public virtual async Task<Result<IEnumerable<TEntity>>> GetAllAsync(
         CancellationToken cancellationToken = default
     )
     {
+        var disposedCheck = CheckDisposed();
+        if (disposedCheck.IsFailure)
+            return Result<IEnumerable<TEntity>>.Failure(disposedCheck.Error);
+
         try
         {
             var entities = await _entities.ToListAsync(cancellationToken);
@@ -40,15 +56,14 @@ public abstract class BaseRepository<TEntity>(ApplicationDbContext context)
         CancellationToken cancellationToken = default
     )
     {
+        var disposedCheck = CheckDisposed();
+        if (disposedCheck.IsFailure)
+            return Result<TEntity>.Failure(disposedCheck.Error);
+
         try
         {
-            Console.WriteLine($"Debug: Adding entity to DbSet");
             await _entities.AddAsync(entity, cancellationToken);
-
-            Console.WriteLine($"Debug: Saving changes to database");
-            var changes = await _context.SaveChangesAsync(cancellationToken);
-            Console.WriteLine($"Debug: Saved {changes} changes to database");
-
+            await _context.SaveChangesAsync(cancellationToken);
             return Result<TEntity>.Success(entity);
         }
         catch (Exception ex)
@@ -62,6 +77,10 @@ public abstract class BaseRepository<TEntity>(ApplicationDbContext context)
         CancellationToken cancellationToken = default
     )
     {
+        var disposedCheck = CheckDisposed();
+        if (disposedCheck.IsFailure)
+            return Result<TEntity>.Failure(disposedCheck.Error);
+
         try
         {
             _entities.Update(entity);
@@ -75,16 +94,16 @@ public abstract class BaseRepository<TEntity>(ApplicationDbContext context)
     }
 
     public virtual async Task<Result> DeleteAsync(
-        int id,
+        TEntity entity,
         CancellationToken cancellationToken = default
     )
     {
+        var disposedCheck = CheckDisposed();
+        if (disposedCheck.IsFailure)
+            return Result.Failure(disposedCheck.Error);
+
         try
         {
-            var entity = await _entities.FindAsync([id], cancellationToken);
-            if (entity == null)
-                return Result.Failure($"Entity with ID {id} not found.");
-
             _entities.Remove(entity);
             await _context.SaveChangesAsync(cancellationToken);
             return Result.Success();
@@ -93,5 +112,46 @@ public abstract class BaseRepository<TEntity>(ApplicationDbContext context)
         {
             return Result.Failure($"Failed to delete entity: {ex.Message}");
         }
+    }
+
+    protected virtual async Task DisposeAsync(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                await _context.DisposeAsync();
+            }
+            _disposed = true;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await DisposeAsync(true);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                _context.Dispose();
+            }
+            _disposed = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    ~BaseRepository()
+    {
+        Dispose(false);
     }
 }

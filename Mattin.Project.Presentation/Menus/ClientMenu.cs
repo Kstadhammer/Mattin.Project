@@ -56,8 +56,14 @@ public class ClientMenu : BaseMenu
             try
             {
                 DisplayHeader("All Clients");
-                var clients = await _clientService.GetAllAsync();
+                var clientsResult = await _clientService.GetAllAsync();
+                if (clientsResult.IsFailure)
+                {
+                    DisplayError(clientsResult.Error);
+                    return;
+                }
 
+                var clients = clientsResult.Value;
                 if (!clients.Any())
                 {
                     Console.WriteLine("No clients found.");
@@ -70,7 +76,6 @@ public class ClientMenu : BaseMenu
                 var clientsList = clients.ToList();
                 clientsList.Add(null!);
 
-                // Display clients as selectable items
                 var selectedClient = _menuHelper.SelectFromList(
                     "Clients",
                     clientsList,
@@ -83,16 +88,12 @@ public class ClientMenu : BaseMenu
                                 + $"  Address: {c.Address ?? "N/A"}\n"
                                 + $"  Active Projects: {c.ActiveProjectsCount}\n"
                                 + $"  Total Project Value: {c.FormattedTotalProjectValue}\n",
-                    ConsoleColor.Yellow // Changed from Green to Yellow for better visibility
+                    ConsoleColor.Yellow
                 );
 
-                // If "Back to Main Menu" was selected
                 if (selectedClient == null)
-                {
                     return;
-                }
 
-                // Show edit options for the selected client
                 var editOptions = new[]
                 {
                     "Edit Name",
@@ -100,20 +101,13 @@ public class ClientMenu : BaseMenu
                     "Edit Phone Number",
                     "Edit Address",
                     "Back to Clients List",
-                    "Exit to Menu",
                 };
 
-                var choice = _menuHelper.ShowMenu(editOptions, itemColor: ConsoleColor.Yellow);
+                DisplayHeader($"Editing Client: {selectedClient.Name}");
+                var choice = _menuHelper.ShowMenu(editOptions, itemColor: ConsoleColor.Green);
 
                 if (choice == 4) // Back to list
-                {
                     continue;
-                }
-
-                if (choice == 5) // Exit to menu
-                {
-                    return;
-                }
 
                 var dto = new UpdateClientDto
                 {
@@ -124,81 +118,83 @@ public class ClientMenu : BaseMenu
                     Address = selectedClient.Address,
                 };
 
-                var updated = false;
-                switch (choice)
+                try
                 {
-                    case 0: // Name
-                        var newName = _menuHelper.GetUserInput("New Name", true);
-                        if (!string.IsNullOrWhiteSpace(newName))
-                        {
-                            if (newName.Length > 100)
+                    switch (choice)
+                    {
+                        case 0: // Name
+                            var newName = _menuHelper.GetUserInput("New Name", true);
+                            if (!string.IsNullOrWhiteSpace(newName))
                             {
-                                DisplayError("Name cannot be longer than 100 characters.");
+                                if (newName.Length > 100)
+                                {
+                                    DisplayError("Name cannot be longer than 100 characters.");
+                                    continue;
+                                }
+                                dto.Name = newName;
+                            }
+                            break;
+                        case 1: // Email
+                            var newEmail = _menuHelper.GetUserInput("New Email", true);
+                            if (!string.IsNullOrWhiteSpace(newEmail))
+                            {
+                                if (!IsValidEmail(newEmail))
+                                {
+                                    DisplayError("Please enter a valid email address.");
+                                    continue;
+                                }
+                                if (newEmail.Length > 100)
+                                {
+                                    DisplayError("Email cannot be longer than 100 characters.");
+                                    continue;
+                                }
+                                dto.Email = newEmail;
+                            }
+                            break;
+                        case 2: // Phone Number
+                            var newPhone = _menuHelper.GetUserInput("New Phone Number", true);
+                            if (!string.IsNullOrWhiteSpace(newPhone))
+                            {
+                                if (!IsValidPhoneNumber(newPhone))
+                                {
+                                    DisplayError("Please enter a valid phone number.");
+                                    continue;
+                                }
+                                if (newPhone.Length > 20)
+                                {
+                                    DisplayError(
+                                        "Phone number cannot be longer than 20 characters."
+                                    );
+                                    continue;
+                                }
+                                dto.PhoneNumber = newPhone;
+                            }
+                            break;
+                        case 3: // Address
+                            var newAddress = _menuHelper.GetUserInput("New Address", true);
+                            if (newAddress?.Length > 200)
+                            {
+                                DisplayError("Address cannot be longer than 200 characters.");
                                 continue;
                             }
-                            dto.Name = newName;
-                            updated = true;
-                        }
-                        break;
-                    case 1: // Email
-                        var newEmail = _menuHelper.GetUserInput("New Email", true);
-                        if (!string.IsNullOrWhiteSpace(newEmail))
-                        {
-                            if (!IsValidEmail(newEmail))
-                            {
-                                DisplayError("Please enter a valid email address.");
-                                continue;
-                            }
-                            if (newEmail.Length > 100)
-                            {
-                                DisplayError("Email cannot be longer than 100 characters.");
-                                continue;
-                            }
-                            dto.Email = newEmail;
-                            updated = true;
-                        }
-                        break;
-                    case 2: // Phone Number
-                        var newPhone = _menuHelper.GetUserInput("New Phone Number", true);
-                        if (!string.IsNullOrWhiteSpace(newPhone))
-                        {
-                            if (!IsValidPhoneNumber(newPhone))
-                            {
-                                DisplayError("Please enter a valid phone number.");
-                                continue;
-                            }
-                            if (newPhone.Length > 20)
-                            {
-                                DisplayError("Phone number cannot be longer than 20 characters.");
-                                continue;
-                            }
-                            dto.PhoneNumber = newPhone;
-                            updated = true;
-                        }
-                        break;
-                    case 3: // Address
-                        var newAddress = _menuHelper.GetUserInput("New Address", true);
-                        if (newAddress?.Length > 200)
-                        {
-                            DisplayError("Address cannot be longer than 200 characters.");
-                            continue;
-                        }
-                        dto.Address = newAddress;
-                        updated = true;
-                        break;
-                }
+                            dto.Address = newAddress;
+                            break;
+                    }
 
-                if (updated) // Only update if changes were made
+                    var updateResult = await _clientService.UpdateAsync(dto);
+                    if (updateResult.IsFailure)
+                        DisplayError(updateResult.Error);
+                    else
+                        DisplaySuccess("Client updated successfully");
+                }
+                catch (Exception ex)
                 {
-                    await _clientService.UpdateAsync(dto);
-                    DisplaySuccess("Client updated successfully");
+                    DisplayError($"Failed to update client: {ex.Message}");
                 }
             }
             catch (Exception ex)
             {
                 DisplayError($"Failed to update client: {ex.Message}");
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ReadKey(true);
             }
         }
     }
@@ -243,8 +239,11 @@ public class ClientMenu : BaseMenu
                 Address = _menuHelper.GetUserInput("Address (optional)", true),
             };
 
-            var client = await _clientService.CreateAsync(dto);
-            DisplaySuccess($"Client {client.Name} created successfully");
+            var createResult = await _clientService.CreateAsync(dto);
+            if (createResult.IsFailure)
+                DisplayError(createResult.Error);
+            else
+                DisplaySuccess($"Client {createResult.Value.Name} created successfully");
         }
         catch (Exception ex)
         {
@@ -258,18 +257,56 @@ public class ClientMenu : BaseMenu
 
         try
         {
-            var clients = await _clientService.GetAllAsync();
+            var clientsResult = await _clientService.GetAllAsync();
+            if (clientsResult.IsFailure)
+            {
+                DisplayError(clientsResult.Error);
+                return;
+            }
+
+            var clients = clientsResult.Value;
             if (!clients.Any())
             {
                 DisplayError("No clients available to edit.");
                 return;
             }
 
+            // Add a null entry for "Back to Main Menu"
+            var clientsList = clients.ToList();
+            clientsList.Add(null!);
+
             var selectedClient = _menuHelper.SelectFromList(
                 "Clients",
-                clients,
-                c => $"{c.Name} ({c.Email})"
+                clientsList,
+                c =>
+                    c == null
+                        ? "Back to Main Menu"
+                        : $"Client: {c.Name}\n"
+                            + $"  Email: {c.Email}\n"
+                            + $"  Phone: {c.PhoneNumber}\n"
+                            + $"  Address: {c.Address ?? "N/A"}\n"
+                            + $"  Active Projects: {c.ActiveProjectsCount}\n"
+                            + $"  Total Project Value: {c.FormattedTotalProjectValue}\n",
+                ConsoleColor.Yellow
             );
+
+            if (selectedClient == null)
+                return;
+
+            var editOptions = new[]
+            {
+                "Edit Name",
+                "Edit Email",
+                "Edit Phone Number",
+                "Edit Address",
+                "Back to Clients List",
+            };
+
+            DisplayHeader($"Editing Client: {selectedClient.Name}");
+            var choice = _menuHelper.ShowMenu(editOptions, itemColor: ConsoleColor.Green);
+
+            if (choice == 4) // Back to list
+                return;
 
             var dto = new UpdateClientDto
             {
@@ -280,87 +317,100 @@ public class ClientMenu : BaseMenu
                 Address = selectedClient.Address,
             };
 
-            var updated = false;
+            try
+            {
+                switch (choice)
+                {
+                    case 0: // Name
+                        var newName = _menuHelper.GetUserInput(
+                            "New Name (press Enter to keep current)",
+                            true
+                        );
+                        if (!string.IsNullOrWhiteSpace(newName))
+                        {
+                            if (newName.Length > 100)
+                            {
+                                DisplayError("Name cannot be longer than 100 characters.");
+                                return;
+                            }
+                            dto.Name = newName;
+                        }
+                        break;
+                    case 1: // Email
+                        var newEmail = _menuHelper.GetUserInput(
+                            "New Email (press Enter to keep current)",
+                            true
+                        );
+                        if (!string.IsNullOrWhiteSpace(newEmail))
+                        {
+                            if (!IsValidEmail(newEmail))
+                            {
+                                DisplayError("Please enter a valid email address.");
+                                return;
+                            }
+                            if (newEmail.Length > 100)
+                            {
+                                DisplayError("Email cannot be longer than 100 characters.");
+                                return;
+                            }
+                            dto.Email = newEmail;
+                        }
+                        break;
+                    case 2: // Phone Number
+                        var newPhone = _menuHelper.GetUserInput(
+                            "New Phone Number (press Enter to keep current)",
+                            true
+                        );
+                        if (!string.IsNullOrWhiteSpace(newPhone))
+                        {
+                            if (!IsValidPhoneNumber(newPhone))
+                            {
+                                DisplayError("Please enter a valid phone number.");
+                                return;
+                            }
+                            if (newPhone.Length > 20)
+                            {
+                                DisplayError("Phone number cannot be longer than 20 characters.");
+                                return;
+                            }
+                            dto.PhoneNumber = newPhone;
+                        }
+                        break;
+                    case 3: // Address
+                        var newAddress = _menuHelper.GetUserInput(
+                            "New Address (press Enter to keep current)",
+                            true
+                        );
+                        if (newAddress?.Length > 200)
+                        {
+                            DisplayError("Address cannot be longer than 200 characters.");
+                            return;
+                        }
+                        dto.Address = newAddress;
+                        break;
+                }
 
-            // Name
-            var newName = _menuHelper.GetUserInput(
-                "Client Name (press Enter to keep current)",
-                true
-            );
-            if (!string.IsNullOrWhiteSpace(newName))
-            {
-                if (newName.Length > 100)
+                if (
+                    dto.Name != selectedClient.Name
+                    || dto.Email != selectedClient.Email
+                    || dto.PhoneNumber != selectedClient.PhoneNumber
+                    || dto.Address != selectedClient.Address
+                )
                 {
-                    DisplayError("Name cannot be longer than 100 characters.");
-                    return;
+                    var updateResult = await _clientService.UpdateAsync(dto);
+                    if (updateResult.IsFailure)
+                        DisplayError(updateResult.Error);
+                    else
+                        DisplaySuccess("Client updated successfully");
                 }
-                dto.Name = newName;
-                updated = true;
+                else
+                {
+                    DisplaySuccess("No changes were made");
+                }
             }
-
-            // Email
-            var newEmail = _menuHelper.GetUserInput("Email (press Enter to keep current)", true);
-            if (!string.IsNullOrWhiteSpace(newEmail))
+            catch (Exception ex)
             {
-                if (!IsValidEmail(newEmail))
-                {
-                    DisplayError("Please enter a valid email address.");
-                    return;
-                }
-                if (newEmail.Length > 100)
-                {
-                    DisplayError("Email cannot be longer than 100 characters.");
-                    return;
-                }
-                dto.Email = newEmail;
-                updated = true;
-            }
-
-            // Phone
-            var newPhone = _menuHelper.GetUserInput(
-                "Phone Number (press Enter to keep current)",
-                true
-            );
-            if (!string.IsNullOrWhiteSpace(newPhone))
-            {
-                if (!IsValidPhoneNumber(newPhone))
-                {
-                    DisplayError("Please enter a valid phone number.");
-                    return;
-                }
-                if (newPhone.Length > 20)
-                {
-                    DisplayError("Phone number cannot be longer than 20 characters.");
-                    return;
-                }
-                dto.PhoneNumber = newPhone;
-                updated = true;
-            }
-
-            // Address
-            var newAddress = _menuHelper.GetUserInput(
-                "Address (press Enter to keep current)",
-                true
-            );
-            if (newAddress != null)
-            {
-                if (newAddress.Length > 200)
-                {
-                    DisplayError("Address cannot be longer than 200 characters.");
-                    return;
-                }
-                dto.Address = newAddress;
-                updated = true;
-            }
-
-            if (updated)
-            {
-                await _clientService.UpdateAsync(dto);
-                DisplaySuccess("Client updated successfully");
-            }
-            else
-            {
-                DisplaySuccess("No changes were made");
+                DisplayError($"Failed to update client: {ex.Message}");
             }
         }
         catch (Exception ex)
