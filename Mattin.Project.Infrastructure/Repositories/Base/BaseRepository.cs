@@ -6,7 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mattin.Project.Infrastructure.Repositories.Base;
 
-public abstract class BaseRepository<TEntity>(ApplicationDbContext context) : IBaseRepository<TEntity>
+public abstract class BaseRepository<TEntity>(ApplicationDbContext context)
+    : IBaseRepository<TEntity>
     where TEntity : BaseEntity
 {
     protected readonly ApplicationDbContext _context = context;
@@ -34,8 +35,13 @@ public abstract class BaseRepository<TEntity>(ApplicationDbContext context) : IB
     {
         try
         {
+            Console.WriteLine($"Debug: Adding entity to DbSet");
             await _entities.AddAsync(entity, cancellationToken);
-            await _context.SaveChangesAsync(cancellationToken);
+
+            Console.WriteLine($"Debug: Saving changes to database");
+            var changes = await _context.SaveChangesAsync(cancellationToken);
+            Console.WriteLine($"Debug: Saved {changes} changes to database");
+
             return Result<TEntity>.Success(entity);
         }
         catch (Exception ex)

@@ -10,8 +10,8 @@ namespace Mattin.Project.Infrastructure.Services;
 public class ProjectService(
     IProjectRepository projectRepository,
     IStatusRepository statusRepository,
-    IMapper mapper)
-    : BaseService<ProjectEntity>(projectRepository), IProjectService
+    IMapper mapper
+) : BaseService<ProjectEntity>(projectRepository), IProjectService
 {
     public async Task<IEnumerable<ProjectDetailsDto>> GetAllAsync()
     {
@@ -34,33 +34,59 @@ public class ProjectService(
 
     public async Task<ProjectDetailsDto> CreateAsync(CreateProjectDto dto)
     {
-        var entity = mapper.Map<ProjectEntity>(dto);
-
-        // Generate project number
-        entity.ProjectNumber = await GenerateProjectNumberAsync();
-
-        // Get default status
-        var statusResult = await statusRepository.GetDefaultStatusAsync();
-        if (statusResult.IsFailure)
-            throw new InvalidOperationException(statusResult.Error);
-
-        var defaultStatus =
-            statusResult.Value ?? throw new InvalidOperationException("No default status found");
-        entity.StatusId = defaultStatus.Id;
-
-        // Calculate total price if not set
-        if (entity is { TotalPrice: <= 0, HourlyRate: > 0 })
+        try
         {
-            var workDays = (entity.EndDate ?? DateTime.MaxValue) - entity.StartDate;
-            var estimatedHours = workDays.Days * 8; // Assuming 8 hours per day
-            entity.TotalPrice = entity.HourlyRate * estimatedHours;
+            var entity = mapper.Map<ProjectEntity>(dto);
+            Console.WriteLine(
+                $"Debug: Mapped entity - ProjectManagerId: {entity.ProjectManagerId}, ClientId: {entity.ClientId}"
+            );
+
+            // Generate project number
+            entity.ProjectNumber = await GenerateProjectNumberAsync();
+            Console.WriteLine($"Debug: Generated project number: {entity.ProjectNumber}");
+
+            // Get status by name
+            var statusResult = await statusRepository.GetAllAsync();
+            if (statusResult.IsFailure)
+                throw new InvalidOperationException(statusResult.Error);
+
+            var status =
+                statusResult.Value.FirstOrDefault(s => s.Name == dto.Status)
+                ?? throw new InvalidOperationException($"Invalid status: {dto.Status}");
+
+            entity.StatusId = status.Id;
+            entity.Created = DateTime.UtcNow;
+            Console.WriteLine($"Debug: Set StatusId: {entity.StatusId}");
+
+            // Calculate total price if not set
+            if (entity is { TotalPrice: <= 0, HourlyRate: > 0 })
+            {
+                var workDays = (entity.EndDate ?? DateTime.MaxValue) - entity.StartDate;
+                var estimatedHours = workDays.Days * 8; // Assuming 8 hours per day
+                entity.TotalPrice = entity.HourlyRate * estimatedHours;
+                Console.WriteLine($"Debug: Calculated total price: {entity.TotalPrice}");
+            }
+
+            Console.WriteLine(
+                $"Debug: About to add entity - Title: {entity.Title}, ClientId: {entity.ClientId}, ProjectManagerId: {entity.ProjectManagerId}, StatusId: {entity.StatusId}"
+            );
+            var result = await projectRepository.AddAsync(entity);
+            if (result.IsFailure)
+                throw new InvalidOperationException(result.Error);
+
+            return mapper.Map<ProjectDetailsDto>(result.Value);
         }
-
-        var result = await projectRepository.AddAsync(entity);
-        if (result.IsFailure)
-            throw new InvalidOperationException(result.Error);
-
-        return mapper.Map<ProjectDetailsDto>(result.Value);
+        catch (Exception ex)
+        {
+            var fullMessage = ex.Message;
+            var innerException = ex.InnerException;
+            while (innerException != null)
+            {
+                fullMessage += $"\nInner Exception: {innerException.Message}";
+                innerException = innerException.InnerException;
+            }
+            throw new InvalidOperationException(fullMessage);
+        }
     }
 
     public async Task<ProjectDetailsDto> UpdateAsync(UpdateProjectDto dto)

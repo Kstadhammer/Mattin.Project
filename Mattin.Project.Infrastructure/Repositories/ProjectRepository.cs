@@ -60,11 +60,13 @@ public class ProjectRepository(ApplicationDbContext context)
     {
         try
         {
+            Console.WriteLine("Debug: Fetching all projects from database");
             var projects = await _entities
                 .Include(p => p.Client)
                 .Include(p => p.Status)
                 .Include(p => p.ProjectManager)
                 .ToListAsync(cancellationToken);
+            Console.WriteLine($"Debug: Found {projects.Count} projects");
             return Result<IEnumerable<ProjectEntity>>.Success(projects);
         }
         catch (Exception ex)

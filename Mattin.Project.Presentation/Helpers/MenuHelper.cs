@@ -50,7 +50,11 @@ public class MenuHelper
             throw new InvalidOperationException($"No {title.ToLower()} available.");
 
         Console.WriteLine($"\nAvailable {title}:");
-        var options = itemsList.Select(displaySelector).ToArray();
+        Console.WriteLine("═".PadRight(Console.WindowWidth - 1, '═'));
+
+        // Create display options without extra newlines
+        var options = itemsList.Select(item => displaySelector(item)).ToArray();
+
         var selectedIndex = ShowMenu(options);
         Console.WriteLine(); // Add a blank line after selection
 

@@ -27,4 +27,7 @@ public class CreateProjectDto
 
     [Range(0, double.MaxValue)]
     public decimal TotalPrice { get; set; }
+
+    [Required]
+    public string Status { get; set; } = string.Empty;
 }

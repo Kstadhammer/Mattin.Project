@@ -9,7 +9,8 @@ public class ProjectMappingProfile : Profile
     public ProjectMappingProfile()
     {
         // ProjectEntity -> ProjectDetailsDto
-        CreateMap<ProjectEntity, ProjectDetailsDto>();
+        CreateMap<ProjectEntity, ProjectDetailsDto>()
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.Name));
 
         // CreateProjectDto -> ProjectEntity
         CreateMap<CreateProjectDto, ProjectEntity>()
@@ -20,8 +21,7 @@ public class ProjectMappingProfile : Profile
             .ForMember(dest => dest.Status, opt => opt.Ignore())
             .ForMember(dest => dest.StatusId, opt => opt.Ignore())
             .ForMember(dest => dest.Client, opt => opt.Ignore())
-            .ForMember(dest => dest.ProjectManager, opt => opt.Ignore())
-            .ForMember(dest => dest.ProjectManagerId, opt => opt.Ignore());
+            .ForMember(dest => dest.ProjectManager, opt => opt.Ignore());
 
         // UpdateProjectDto -> ProjectEntity
         CreateMap<UpdateProjectDto, ProjectEntity>()
@@ -29,8 +29,7 @@ public class ProjectMappingProfile : Profile
             .ForMember(dest => dest.Modified, opt => opt.Ignore())
             .ForMember(dest => dest.ProjectNumber, opt => opt.Ignore())
             .ForMember(dest => dest.Client, opt => opt.Ignore())
-            .ForMember(dest => dest.ProjectManager, opt => opt.Ignore())
-            .ForMember(dest => dest.ProjectManagerId, opt => opt.Ignore());
+            .ForMember(dest => dest.ProjectManager, opt => opt.Ignore());
 
         // ProjectEntity -> UpdateProjectDto
         CreateMap<ProjectEntity, UpdateProjectDto>();
