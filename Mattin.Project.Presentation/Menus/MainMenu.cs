@@ -6,8 +6,15 @@ namespace Mattin.Project.Presentation.Menus;
 
 public class MainMenu : BaseMenu
 {
+    private readonly ProjectMenu _projectMenu;
+    private readonly ClientMenu _clientMenu;
+
     public MainMenu(IServiceFactory serviceFactory)
-        : base(serviceFactory) { }
+        : base(serviceFactory)
+    {
+        _projectMenu = new ProjectMenu(serviceFactory);
+        _clientMenu = new ClientMenu(serviceFactory);
+    }
 
     public override async Task ShowAsync()
     {
@@ -19,61 +26,32 @@ public class MainMenu : BaseMenu
 
             var options = new[]
             {
-                "📄 Project Management",
-                "👥 Client Management",
-                "❔ Help & Information",
-                "❌ Exit Application",
+                "Client Management",
+                "Project Management",
+                "✨ Surprise!",
+                "Exit",
             };
 
-            var choice = _menuHelper.ShowMenu(options);
+            Console.WriteLine("\nUse arrow keys to navigate and Enter to select");
+
+            var choice = _menuHelper.ShowMenu(options, itemColor: ConsoleColor.Cyan);
 
             switch (choice)
             {
                 case 0:
-                    await ShowProjectManagementAsync();
+                    await _clientMenu.ShowAsync();
                     break;
                 case 1:
-                    await ShowClientManagementAsync();
+                    await _projectMenu.ShowAsync();
                     break;
                 case 2:
-                    ShowHelp();
+                    LogoHelper.DisplayMatrixEffect();
                     break;
                 case 3:
-                    if (await ConfirmActionAsync("Are you sure you want to exit?"))
-                        running = false;
+                    running = false;
                     break;
             }
         }
-    }
-
-    private async Task ShowProjectManagementAsync()
-    {
-        Console.Clear();
-        LogoHelper.DisplaySmallLogo();
-
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine("\n  Project Management");
-        Console.ForegroundColor = ConsoleColor.Gray;
-        Console.WriteLine("  Manage your projects, track status, and monitor progress.\n");
-        Console.ResetColor();
-
-        var projectMenu = new ProjectMenu(_serviceFactory);
-        await projectMenu.ShowAsync();
-    }
-
-    private async Task ShowClientManagementAsync()
-    {
-        Console.Clear();
-        LogoHelper.DisplaySmallLogo();
-
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine("\n  Client Management");
-        Console.ForegroundColor = ConsoleColor.Gray;
-        Console.WriteLine("  Manage your clients and their associated projects.\n");
-        Console.ResetColor();
-
-        var clientMenu = new ClientMenu(_serviceFactory);
-        await clientMenu.ShowAsync();
     }
 
     private void ShowHelp()

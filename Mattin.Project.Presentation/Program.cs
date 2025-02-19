@@ -15,9 +15,7 @@ Console.CursorVisible = false;
 try
 {
     var services = new ServiceCollection();
-    services.AddInfrastructure(
-        Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mattinproject.db")
-    );
+    services.AddInfrastructure();
     var serviceProvider = services.BuildServiceProvider();
 
     var serviceFactory = serviceProvider.GetRequiredService<IServiceFactory>();

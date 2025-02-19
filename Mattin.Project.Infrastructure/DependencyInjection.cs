@@ -16,11 +16,25 @@ namespace Mattin.Project.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services,
-        string dbPath
-    )
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
+        // Get the current assembly location
+        var assemblyLocation = typeof(DependencyInjection).Assembly.Location;
+        var assemblyDirectory = Path.GetDirectoryName(assemblyLocation)!;
+
+        // Navigate up to solution root (3 levels up from bin/Debug/net9.0)
+        var solutionDir = Path.GetFullPath(Path.Combine(assemblyDirectory, "../../.."));
+        var dataDir = Path.Combine(solutionDir, "Data");
+
+        // Create the directory if it doesn't exist
+        if (!Directory.Exists(dataDir))
+        {
+            Directory.CreateDirectory(dataDir);
+        }
+
+        var dbPath = Path.Combine(dataDir, "mattinproject.db");
+        Console.WriteLine($"Database path: {dbPath}"); // Debug line
+
         // Database
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite($"Data Source={dbPath}")

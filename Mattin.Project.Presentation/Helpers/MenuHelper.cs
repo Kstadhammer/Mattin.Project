@@ -8,7 +8,7 @@ namespace Mattin.Project.Presentation.Helpers;
 
 public class MenuHelper
 {
-    public int ShowMenu(string[] options, int selectedIndex = 0)
+    public int ShowMenu(string[] options, int selectedIndex = 0, ConsoleColor? itemColor = null)
     {
         ConsoleKey keyPressed;
         do
@@ -20,6 +20,10 @@ public class MenuHelper
                 {
                     Console.BackgroundColor = ConsoleColor.White;
                     Console.ForegroundColor = ConsoleColor.Black;
+                }
+                else if (itemColor.HasValue)
+                {
+                    Console.ForegroundColor = itemColor.Value;
                 }
 
                 Console.WriteLine(options[i]);
@@ -49,7 +53,12 @@ public class MenuHelper
         return selectedIndex;
     }
 
-    public T SelectFromList<T>(string title, IEnumerable<T> items, Func<T, string> displaySelector)
+    public T SelectFromList<T>(
+        string title,
+        IEnumerable<T> items,
+        Func<T, string> displaySelector,
+        ConsoleColor? itemColor = null
+    )
     {
         var itemsList = items.ToList();
         if (!itemsList.Any())
@@ -61,7 +70,7 @@ public class MenuHelper
         // Create display options without extra newlines
         var options = itemsList.Select(item => displaySelector(item)).ToArray();
 
-        var selectedIndex = ShowMenu(options);
+        var selectedIndex = ShowMenu(options, itemColor: itemColor);
         Console.WriteLine(); // Add a blank line after selection
 
         return itemsList[selectedIndex];

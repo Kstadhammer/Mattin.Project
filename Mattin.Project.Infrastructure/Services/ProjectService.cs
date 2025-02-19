@@ -99,7 +99,14 @@ public class ProjectService(
     {
         try
         {
-            var entity = mapper.Map<ProjectEntity>(dto);
+            // Get the existing project first
+            var existingProject = await projectRepository.GetAllAsync();
+            if (existingProject.IsFailure)
+                throw new InvalidOperationException(existingProject.Error);
+
+            var project =
+                existingProject.Value.FirstOrDefault(p => p.Id == dto.Id)
+                ?? throw new KeyNotFoundException($"Project with ID {dto.Id} not found.");
 
             // Get status by name
             var statusResult = await statusRepository.GetAllAsync();
@@ -110,10 +117,12 @@ public class ProjectService(
                 statusResult.Value.FirstOrDefault(s => s.Name == dto.Status)
                 ?? throw new InvalidOperationException($"Invalid status: {dto.Status}");
 
-            entity.StatusId = status.Id;
-            entity.Modified = DateTime.UtcNow;
+            // Update the existing entity with new values
+            mapper.Map(dto, project);
+            project.StatusId = status.Id;
+            project.Modified = DateTime.UtcNow;
 
-            var result = await projectRepository.UpdateAsync(entity);
+            var result = await projectRepository.UpdateAsync(project);
             if (result.IsFailure)
                 throw new InvalidOperationException(result.Error);
 

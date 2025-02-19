@@ -35,6 +35,7 @@ public class ClientService(
     public async Task<ClientDetailsDto> CreateAsync(CreateClientDto dto)
     {
         var entity = mapper.Map<Client>(dto);
+        entity.Created = DateTime.UtcNow;
         var result = await clientRepository.AddAsync(entity);
         if (result.IsFailure)
             throw new InvalidOperationException(result.Error);
@@ -44,19 +45,38 @@ public class ClientService(
 
     public async Task<ClientDetailsDto> UpdateAsync(UpdateClientDto dto)
     {
-        var result = await clientRepository.GetAllAsync();
-        if (result.IsFailure)
-            throw new InvalidOperationException(result.Error);
+        try
+        {
+            // Get the existing client first
+            var existingClient = await clientRepository.GetAllAsync();
+            if (existingClient.IsFailure)
+                throw new InvalidOperationException(existingClient.Error);
 
-        if (result.Value.All(c => c.Id != dto.Id))
-            throw new KeyNotFoundException($"Client with ID {dto.Id} not found.");
+            var client =
+                existingClient.Value.FirstOrDefault(c => c.Id == dto.Id)
+                ?? throw new KeyNotFoundException($"Client with ID {dto.Id} not found.");
 
-        var entity = mapper.Map<Client>(dto);
-        var updateResult = await clientRepository.UpdateAsync(entity);
-        if (updateResult.IsFailure)
-            throw new InvalidOperationException(updateResult.Error);
+            // Update the existing entity with new values
+            mapper.Map(dto, client);
+            client.Modified = DateTime.UtcNow;
 
-        return mapper.Map<ClientDetailsDto>(updateResult.Value);
+            var updateResult = await clientRepository.UpdateAsync(client);
+            if (updateResult.IsFailure)
+                throw new InvalidOperationException(updateResult.Error);
+
+            return mapper.Map<ClientDetailsDto>(updateResult.Value);
+        }
+        catch (Exception ex)
+        {
+            var fullMessage = ex.Message;
+            var innerException = ex.InnerException;
+            while (innerException != null)
+            {
+                fullMessage += $"\nInner Exception: {innerException.Message}";
+                innerException = innerException.InnerException;
+            }
+            throw new InvalidOperationException(fullMessage);
+        }
     }
 
     public async Task<bool> DeleteAsync(int id)

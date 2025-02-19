@@ -34,7 +34,7 @@ public class ProjectMenu : BaseMenu
                 "Back to Main Menu",
             };
 
-            var choice = _menuHelper.ShowMenu(options);
+            var choice = _menuHelper.ShowMenu(options, itemColor: ConsoleColor.Cyan);
             switch (choice)
             {
                 case 0:
@@ -68,18 +68,29 @@ public class ProjectMenu : BaseMenu
                 return;
             }
 
-            // Display projects as selectable items
+            // Display projects as selectable items with a "Back to Main Menu" option
+            var projectsList = projects.ToList();
+            projectsList.Add(null!); // Add a null entry for the "Back to Main Menu" option
             var selectedProject = _menuHelper.SelectFromList(
                 "Projects",
-                projects,
+                projectsList,
                 p =>
-                    $"Project: {p.ProjectNumber} - {p.Title}\n"
-                    + $"  Client: {p.Client?.Name ?? "N/A"}\n"
-                    + $"  Status: {p.Status}\n"
-                    + $"  Manager: {p.ProjectManager?.Name ?? "N/A"}\n"
-                    + $"  Timeline: {p.StartDate:yyyy-MM-dd} to {(p.EndDate.HasValue ? p.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")}\n"
-                    + $"  Budget: {p.FormattedTotalPrice}"
+                    p == null
+                        ? "Back to Main Menu"
+                        : $"Project: {p.ProjectNumber} - {p.Title}\n"
+                            + $"  Client: {p.Client?.Name ?? "N/A"}\n"
+                            + $"  Status: {p.Status}\n"
+                            + $"  Manager: {p.ProjectManager?.Name ?? "N/A"}\n"
+                            + $"  Timeline: {p.StartDate:yyyy-MM-dd} to {(p.EndDate.HasValue ? p.EndDate.Value.ToString("yyyy-MM-dd") : "N/A")}\n"
+                            + $"  Budget: {p.FormattedTotalPrice}",
+                ConsoleColor.Cyan
             );
+
+            // If "Back to Main Menu" was selected
+            if (selectedProject == null)
+            {
+                return;
+            }
 
             // Show edit options for the selected project
             var editOptions = new[]
@@ -95,7 +106,7 @@ public class ProjectMenu : BaseMenu
                 "Exit to Menu",
             };
 
-            var choice = _menuHelper.ShowMenu(editOptions);
+            var choice = _menuHelper.ShowMenu(editOptions, itemColor: ConsoleColor.Yellow);
 
             try
             {
@@ -179,7 +190,8 @@ public class ProjectMenu : BaseMenu
             var selectedClient = _menuHelper.SelectFromList(
                 "Clients",
                 clients,
-                client => $"{client.Id}: {client.Name}"
+                client => $"{client.Id}: {client.Name}",
+                ConsoleColor.Green
             );
 
             // Get and select project manager
@@ -187,7 +199,8 @@ public class ProjectMenu : BaseMenu
             var selectedManager = _menuHelper.SelectFromList(
                 "Project Managers",
                 projectManagers,
-                pm => $"{pm.Id}: {pm.Name} ({pm.Department})"
+                pm => $"{pm.Id}: {pm.Name} ({pm.Department})",
+                ConsoleColor.Magenta
             );
 
             // Select status
@@ -197,7 +210,12 @@ public class ProjectMenu : BaseMenu
                 ProjectStatus.InProgress,
                 ProjectStatus.Completed,
             };
-            var selectedStatus = _menuHelper.SelectFromList("Statuses", statuses, status => status);
+            var selectedStatus = _menuHelper.SelectFromList(
+                "Statuses",
+                statuses,
+                status => status,
+                ConsoleColor.DarkYellow
+            );
 
             // Get project details
             var title = _menuHelper.GetUserInput("Project Title");

@@ -76,7 +76,8 @@ public class ClientMenu : BaseMenu
                         + $"  Phone: {c.PhoneNumber}\n"
                         + $"  Address: {c.Address ?? "N/A"}\n"
                         + $"  Active Projects: {c.ActiveProjectsCount}\n"
-                        + $"  Total Project Value: {c.FormattedTotalProjectValue}"
+                        + $"  Total Project Value: {c.FormattedTotalProjectValue}",
+                    ConsoleColor.Green
                 );
 
                 // Show edit options for the selected client
@@ -90,7 +91,17 @@ public class ClientMenu : BaseMenu
                     "Exit to Menu",
                 };
 
-                var choice = _menuHelper.ShowMenu(editOptions);
+                var choice = _menuHelper.ShowMenu(editOptions, itemColor: ConsoleColor.Yellow);
+
+                if (choice == 4) // Back to list
+                {
+                    continue;
+                }
+
+                if (choice == 5) // Exit to menu
+                {
+                    return;
+                }
 
                 var dto = new UpdateClientDto
                 {
@@ -163,10 +174,6 @@ public class ClientMenu : BaseMenu
                         dto.Address = newAddress;
                         updated = true;
                         break;
-                    case 4: // Back to list
-                        continue;
-                    case 5: // Exit
-                        return;
                 }
 
                 if (updated) // Only update if changes were made
