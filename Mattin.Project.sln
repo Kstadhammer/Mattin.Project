@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mattin.Project.Infrastructu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mattin.Project.Presentation", "Mattin.Project.Presentation\Mattin.Project.Presentation.csproj", "{3C544DD8-18A5-47BC-AB5C-CECEC1D46CE3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mattin.Project.API", "Mattin.Project.API\Mattin.Project.API.csproj", "{B2287249-64E0-4386-AB1E-6E8104E074C6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mattin.Project.Web", "Mattin.Project.Web\Mattin.Project.Web.csproj", "{BA78EFF9-1D91-4866-B88A-9558A1582B5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{3C544DD8-18A5-47BC-AB5C-CECEC1D46CE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C544DD8-18A5-47BC-AB5C-CECEC1D46CE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C544DD8-18A5-47BC-AB5C-CECEC1D46CE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2287249-64E0-4386-AB1E-6E8104E074C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2287249-64E0-4386-AB1E-6E8104E074C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2287249-64E0-4386-AB1E-6E8104E074C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2287249-64E0-4386-AB1E-6E8104E074C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA78EFF9-1D91-4866-B88A-9558A1582B5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA78EFF9-1D91-4866-B88A-9558A1582B5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA78EFF9-1D91-4866-B88A-9558A1582B5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA78EFF9-1D91-4866-B88A-9558A1582B5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -111,29 +111,116 @@ public class MenuHelper
 
     public decimal GetDecimalInput(string prompt, decimal minValue = 0)
     {
-        decimal value;
+        decimal value = minValue;
+        decimal increment = 1;
+        ConsoleKey keyPressed;
+
         do
         {
-            Console.Write($"{prompt}: ");
-            var input = Console.ReadLine();
-            if (decimal.TryParse(input, out value) && value >= minValue)
-                return value;
+            Console.CursorVisible = false;
+            Console.Write($"\r{prompt}: {value:N2}   ");
 
-            Console.WriteLine($"Please enter a valid number greater than or equal to {minValue}");
-        } while (true);
+            var keyInfo = Console.ReadKey(true);
+            keyPressed = keyInfo.Key;
+
+            switch (keyPressed)
+            {
+                case ConsoleKey.UpArrow:
+                    value = Math.Max(minValue, value + increment);
+                    break;
+                case ConsoleKey.DownArrow:
+                    value = Math.Max(minValue, value - increment);
+                    break;
+                case ConsoleKey.RightArrow:
+                    increment *= 10;
+                    Console.Write($" (Step: {increment:N0})   ");
+                    break;
+                case ConsoleKey.LeftArrow:
+                    increment = Math.Max(0.01M, increment / 10);
+                    Console.Write($" (Step: {increment:N2})   ");
+                    break;
+                case ConsoleKey.D:
+                    if (keyInfo.Modifiers == ConsoleModifiers.Control)
+                    {
+                        string? input = null;
+                        Console.Write($"\r{prompt}: ");
+                        Console.CursorVisible = true;
+                        input = Console.ReadLine()?.Trim();
+                        if (
+                            decimal.TryParse(input, out decimal parsedValue)
+                            && parsedValue >= minValue
+                        )
+                        {
+                            value = parsedValue;
+                            keyPressed = ConsoleKey.Enter;
+                        }
+                        Console.CursorVisible = false;
+                    }
+                    break;
+            }
+        } while (keyPressed != ConsoleKey.Enter);
+
+        Console.WriteLine(); // Move to next line
+        Console.CursorVisible = true;
+        return value;
     }
 
     public DateTime GetDateInput(string prompt)
     {
-        DateTime value;
+        DateTime value = DateTime.Today;
+        ConsoleKey keyPressed;
+
         do
         {
-            Console.Write($"{prompt} (yyyy-MM-dd): ");
-            var input = Console.ReadLine();
-            if (DateTime.TryParse(input, out value))
-                return value;
+            Console.CursorVisible = false;
+            Console.Write($"\r{prompt} (yyyy-MM-dd): {value:yyyy-MM-dd}   ");
 
-            Console.WriteLine("Please enter a valid date in the format yyyy-MM-dd");
-        } while (true);
+            var keyInfo = Console.ReadKey(true);
+            keyPressed = keyInfo.Key;
+
+            switch (keyPressed)
+            {
+                case ConsoleKey.UpArrow:
+                    value = value.AddDays(1);
+                    break;
+                case ConsoleKey.DownArrow:
+                    value = value.AddDays(-1);
+                    break;
+                case ConsoleKey.LeftArrow:
+                    value = value.AddMonths(-1);
+                    break;
+                case ConsoleKey.RightArrow:
+                    value = value.AddMonths(1);
+                    break;
+                case ConsoleKey.PageUp:
+                    value = value.AddYears(1);
+                    break;
+                case ConsoleKey.PageDown:
+                    value = value.AddYears(-1);
+                    break;
+                case ConsoleKey.T:
+                    value = DateTime.Today;
+                    break;
+                case ConsoleKey.D:
+                    if (keyInfo.Modifiers == ConsoleModifiers.Control)
+                    {
+                        string? input = null;
+                        Console.Write($"\r{prompt} (yyyy-MM-dd): ");
+                        Console.CursorVisible = true;
+                        input = Console.ReadLine()?.Trim();
+                        if (DateTime.TryParse(input, out DateTime parsedDate))
+                        {
+                            value = parsedDate;
+                            keyPressed = ConsoleKey.Enter;
+                        }
+                        Console.CursorVisible = false;
+                    }
+                    break;
+            }
+        } while (keyPressed != ConsoleKey.Enter);
+
+        Console.WriteLine(); // Move to next line
+        Console.CursorVisible = true;
+        return value;
     }
 }

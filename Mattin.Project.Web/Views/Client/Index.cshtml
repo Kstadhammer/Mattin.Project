@@ -1,0 +1,106 @@
+@model IEnumerable<Mattin.Project.Core.Models.DTOs.Client.ClientDetailsDto>
+
+@{
+    ViewData["Title"] = "Clients";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Clients</h1>
+    <a asp-action="Create" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Create New Client
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <form asp-action="Search" method="get" class="d-flex">
+                    <div class="input-group">
+                        <input type="text" name="name" class="form-control" placeholder="Search clients..."
+                            value="@ViewBag.SearchTerm">
+                        <button type="submit" class="btn btn-outline-secondary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Active Projects</th>
+                        <th>Total Value</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>
+                                <a href="mailto:@item.Email">@item.Email</a>
+                            </td>
+                            <td>
+                                <a href="tel:@item.PhoneNumber">@item.PhoneNumber</a>
+                            </td>
+                            <td>
+                                <span class="badge bg-primary rounded-pill">@item.ActiveProjectsCount</span>
+                                <span class="text-muted">/ @(item.ActiveProjectsCount + item.CompletedProjectsCount)</span>
+                            </td>
+                            <td>@item.FormattedTotalProjectValue</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white"
+                                        title="View Details">
+                                        <i class="bi bi-info-circle"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning"
+                                        title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"
+                                        title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-4">
+                <i class="bi bi-people text-muted" style="font-size: 2rem;"></i>
+                <p class="text-muted mt-2">
+                    @if (ViewBag.SearchTerm != null)
+                    {
+                        <span>No clients found matching your search.</span>
+                    }
+                    else
+                    {
+                        <span>No clients have been added yet.</span>
+                    }
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Enable tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}

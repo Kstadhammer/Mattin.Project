@@ -30,4 +30,6 @@ public class CreateProjectDto
 
     [Required]
     public string Status { get; set; } = string.Empty;
+
+    public int? ServiceId { get; set; }
 }

@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="text-center mb-4">
+    <h1 class="display-4">Welcome to Mattin Project Management</h1>
+    <p class="lead">Manage your projects, clients, and services efficiently</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-kanban text-primary"></i> Projects
+                </h5>
+                <p class="card-text">Create and manage projects, track progress, and monitor budgets.</p>
+                <a asp-controller="Project" asp-action="Index" class="btn btn-primary">
+                    View Projects
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-people text-success"></i> Clients
+                </h5>
+                <p class="card-text">Manage client information and view their associated projects.</p>
+                <a asp-controller="Client" asp-action="Index" class="btn btn-success">
+                    View Clients
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-gear text-info"></i> Services
+                </h5>
+                <p class="card-text">Configure services, set pricing, and manage categories.</p>
+                <a asp-controller="Service" asp-action="Index" class="btn btn-info text-white">
+                    View Services
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Quick Actions</h5>
+                <div class="d-flex gap-2">
+                    <a asp-controller="Project" asp-action="Create" class="btn btn-outline-primary">
+                        <i class="bi bi-plus-circle"></i> New Project
+                    </a>
+                    <a asp-controller="Client" asp-action="Create" class="btn btn-outline-success">
+                        <i class="bi bi-plus-circle"></i> New Client
+                    </a>
+                    <a asp-controller="Service" asp-action="Create" class="btn btn-outline-info">
+                        <i class="bi bi-plus-circle"></i> New Service
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

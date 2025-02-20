@@ -1,0 +1,148 @@
+@model Mattin.Project.Core.Models.DTOs.Service.UpdateServiceDto
+
+@{
+    ViewData["Title"] = "Edit Service";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Edit Service</h1>
+    <div>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info text-white">
+            <i class="bi bi-info-circle"></i> Details
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">Name</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Category" class="form-label">Category</label>
+                        <input asp-for="Category" class="form-control" list="categoryList" />
+                        <datalist id="categoryList">
+                            <option value="Development"></option>
+                            <option value="Design"></option>
+                            <option value="Infrastructure"></option>
+                            <option value="Security"></option>
+                            <option value="Analytics"></option>
+                            <option value="Consulting"></option>
+                        </datalist>
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="BasePrice" class="form-label">Base Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="BasePrice" class="form-control" type="number" step="0.01" min="0" />
+                            </div>
+                            <span asp-validation-for="BasePrice" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="HourlyRate" class="form-label">Hourly Rate</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="HourlyRate" class="form-control" type="number" step="0.01" min="0" />
+                            </div>
+                            <span asp-validation-for="HourlyRate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" />
+                            <label asp-for="IsActive" class="form-check-label">Active</label>
+                        </div>
+                        <span asp-validation-for="IsActive" class="text-danger"></span>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Help</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    <i class="bi bi-info-circle text-info"></i>
+                    Update the service details as needed. Required fields are marked with an asterisk (*).
+                </p>
+                <hr />
+                <h6>Tips:</h6>
+                <ul class="small">
+                    <li>Base Price is the starting cost for the service</li>
+                    <li>Hourly Rate is used for additional work beyond the base scope</li>
+                    <li>Category helps organize services (select from list or enter new)</li>
+                    <li>Toggle Active status to control service availability</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Active Status</h5>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-3">
+                    When a service is marked as inactive:
+                </p>
+                <ul class="small">
+                    <li>It won't appear in new project creation</li>
+                    <li>Existing projects are not affected</li>
+                    <li>Historical data is preserved</li>
+                    <li>Can be reactivated at any time</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            // Format currency inputs
+            $('.input-group input[type="number"]').on('input', function () {
+                var value = $(this).val();
+                if (value && !isNaN(value)) {
+                    $(this).val(parseFloat(value).toFixed(2));
+                }
+            });
+        });
+    </script>
+}

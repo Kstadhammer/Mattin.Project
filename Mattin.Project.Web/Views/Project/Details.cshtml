@@ -1,0 +1,139 @@
+@model Mattin.Project.Core.Models.DTOs.Project.ProjectDetailsDto
+
+@{
+    ViewData["Title"] = "Project Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Project Details</h1>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Edit
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Project Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Project Number</div>
+                    <div class="col-sm-8">@Model.ProjectNumber</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Title</div>
+                    <div class="col-sm-8">@Model.Title</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Description</div>
+                    <div class="col-sm-8">@Model.Description</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Status</div>
+                    <div class="col-sm-8">
+                        <span class="badge rounded-pill bg-@(Model.Status switch {
+                            "Not Started" => "secondary",
+                                                        "In Progress" => "primary",
+                                                        "Completed" => "success",
+                                                        _ => "light"
+                                                })">
+                            @Model.Status
+                        </span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Start Date</div>
+                    <div class="col-sm-8">@Model.StartDate.ToShortDateString()</div>
+                </div>
+                @if (Model.EndDate.HasValue)
+                {
+                    <div class="row mb-3">
+                        <div class="col-sm-4 text-muted">End Date</div>
+                        <div class="col-sm-8">@Model.EndDate.Value.ToShortDateString()</div>
+                    </div>
+                }
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Duration</div>
+                    <div class="col-sm-8">@Model.DurationInDays days</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Financial Details</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-6 text-muted">Hourly Rate</div>
+                    <div class="col-sm-6">@Model.FormattedHourlyRate</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-6 text-muted">Total Price</div>
+                    <div class="col-sm-6">@Model.FormattedTotalPrice</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Client Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Name</div>
+                    <div class="col-sm-8">
+                        <a asp-controller="Client" asp-action="Details" asp-route-id="@Model.ClientId">
+                            @Model.Client.Name
+                        </a>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Email</div>
+                    <div class="col-sm-8">
+                        <a href="mailto:@Model.Client.Email">@Model.Client.Email</a>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Phone</div>
+                    <div class="col-sm-8">
+                        <a href="tel:@Model.Client.PhoneNumber">@Model.Client.PhoneNumber</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Project Manager</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Name</div>
+                    <div class="col-sm-8">@Model.ProjectManager.Name</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Email</div>
+                    <div class="col-sm-8">
+                        <a href="mailto:@Model.ProjectManager.Email">@Model.ProjectManager.Email</a>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4 text-muted">Phone</div>
+                    <div class="col-sm-8">
+                        <a href="tel:@Model.ProjectManager.PhoneNumber">@Model.ProjectManager.PhoneNumber</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

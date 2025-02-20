@@ -1,0 +1,6 @@
+@Mattin.Project.API_HostAddress = http://localhost:5184
+
+GET {{Mattin.Project.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

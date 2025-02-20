@@ -1,0 +1,160 @@
+@model Mattin.Project.Core.Models.DTOs.Project.UpdateProjectDto
+
+@{
+    ViewData["Title"] = "Edit Project";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Edit Project</h1>
+    <div>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info text-white">
+            <i class="bi bi-info-circle"></i> Details
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">Title</label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="StartDate" class="form-label">Start Date</label>
+                            <input asp-for="StartDate" class="form-control" type="date" />
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EndDate" class="form-label">End Date</label>
+                            <input asp-for="EndDate" class="form-control" type="date" />
+                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ClientId" class="form-label">Client</label>
+                            <select asp-for="ClientId" class="form-select"
+                                asp-items="@(new SelectList(ViewBag.Clients, "Id", "Name"))">
+                                <option value="">Select a client...</option>
+                            </select>
+                            <span asp-validation-for="ClientId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ProjectManagerId" class="form-label">Project Manager</label>
+                            <select asp-for="ProjectManagerId" class="form-select"
+                                asp-items="@(new SelectList(ViewBag.ProjectManagers, "Id", "Name"))">
+                                <option value="">Select a project manager...</option>
+                            </select>
+                            <span asp-validation-for="ProjectManagerId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Status" class="form-label">Status</label>
+                            <select asp-for="Status" class="form-select"
+                                asp-items="@(new SelectList(ViewBag.Statuses))">
+                                <option value="">Select a status...</option>
+                            </select>
+                            <span asp-validation-for="Status" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="HourlyRate" class="form-label">Hourly Rate</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="HourlyRate" class="form-control" type="number" step="0.01" min="0" />
+                            </div>
+                            <span asp-validation-for="HourlyRate" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="TotalPrice" class="form-label">Total Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="TotalPrice" class="form-control" type="number" step="0.01" min="0" />
+                            </div>
+                            <span asp-validation-for="TotalPrice" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Help</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    <i class="bi bi-info-circle text-info"></i>
+                    Update the project details as needed. Required fields are marked with an asterisk (*).
+                </p>
+                <hr />
+                <h6>Tips:</h6>
+                <ul class="small">
+                    <li>The total price will be recalculated when you change the dates or hourly rate</li>
+                    <li>You can manually adjust the total price if needed</li>
+                    <li>Changing the status will update the project's progress tracking</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            // Calculate total price when dates or hourly rate change
+            $('#StartDate, #EndDate, #HourlyRate').change(calculateTotalPrice);
+
+            function calculateTotalPrice() {
+                var startDate = new Date($('#StartDate').val());
+                var endDate = new Date($('#EndDate').val());
+                var hourlyRate = parseFloat($('#HourlyRate').val()) || 0;
+
+                if (startDate && endDate && hourlyRate > 0) {
+                    var days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                    var totalPrice = days * 8 * hourlyRate; // Assuming 8 hours per day
+                    $('#TotalPrice').val(totalPrice.toFixed(2));
+                }
+            }
+        });
+    </script>
+}

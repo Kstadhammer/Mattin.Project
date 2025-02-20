@@ -1,0 +1,109 @@
+@model IEnumerable<Mattin.Project.Core.Models.DTOs.Project.ProjectDetailsDto>
+
+@{
+    ViewData["Title"] = "Projects";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Projects</h1>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Create New Project
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Project Number</th>
+                        <th>Title</th>
+                        <th>Client</th>
+                        <th>Project Manager</th>
+                        <th>Status</th>
+                        <th>Timeline</th>
+                        <th>Total Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.ProjectNumber</td>
+                            <td>@item.Title</td>
+                            <td>
+                                <a asp-controller="Client" asp-action="Details" asp-route-id="@item.ClientId">
+                                    @item.Client.Name
+                                </a>
+                            </td>
+                            <td>
+                                <a asp-controller="ProjectManager" asp-action="Details"
+                                    asp-route-id="@item.ProjectManagerId">
+                                    @item.ProjectManager.Name
+                                </a>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill bg-@(item.Status switch {
+                                        "Not Started" => "secondary",
+                                                                        "In Progress" => "primary",
+                                                                        "Completed" => "success",
+                                                                        _ => "light"
+                                                                })">
+                                @item.Status
+                            </span>
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                @item.StartDate.ToShortDateString()
+                                @if (item.EndDate.HasValue)
+                                {
+                                    <span>- @item.EndDate.Value.ToShortDateString()</span>
+                                }
+                            </small>
+                        </td>
+                        <td>@item.FormattedTotalPrice</td>
+                        <td>
+                            <div class="btn-group">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white"
+                                    title="View Details">
+                                    <i class="bi bi-info-circle"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning"
+                                    title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"
+                                    title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                                        }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-4">
+                <i class="bi bi-kanban text-muted" style="font-size: 2rem;"></i>
+                <p class="text-muted mt-2">No projects have been added yet.</p>
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create First Project
+                </a>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Enable tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}

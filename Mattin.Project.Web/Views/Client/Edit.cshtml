@@ -1,0 +1,110 @@
+@model Mattin.Project.Core.Models.DTOs.Client.UpdateClientDto
+
+@{
+    ViewData["Title"] = "Edit Client";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Edit Client</h1>
+    <div>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info text-white">
+            <i class="bi bi-info-circle"></i> Details
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">Name</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <input asp-for="Email" class="form-control" type="email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                        <input asp-for="PhoneNumber" class="form-control" type="tel" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label">Address</label>
+                        <textarea asp-for="Address" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Changes
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Help</h5>
+            </div>
+            <div class="card-body">
+                <p class="card-text">
+                    <i class="bi bi-info-circle text-info"></i>
+                    Update the client details as needed. Required fields are marked with an asterisk (*).
+                </p>
+                <hr />
+                <h6>Tips:</h6>
+                <ul class="small">
+                    <li>Use a valid email format (e.g., name@company.com)</li>
+                    <li>Phone numbers should include country/area code</li>
+                    <li>Address is optional but recommended for billing</li>
+                    <li>Changes will be reflected in all associated projects</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            // Format phone number as user types
+            $('#PhoneNumber').on('input', function () {
+                var phone = $(this).val().replace(/\D/g, '');
+                if (phone.length > 10) {
+                    phone = phone.substring(0, 10);
+                }
+                var formatted = '';
+                if (phone.length > 6) {
+                    formatted = phone.substring(0, 3) + '-' + phone.substring(3, 6) + '-' + phone.substring(6);
+                } else if (phone.length > 3) {
+                    formatted = phone.substring(0, 3) + '-' + phone.substring(3);
+                } else {
+                    formatted = phone;
+                }
+                $(this).val(formatted);
+            });
+        });
+    </script>
+}

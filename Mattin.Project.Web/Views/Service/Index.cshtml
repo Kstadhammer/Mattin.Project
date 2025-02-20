@@ -1,0 +1,129 @@
+@model IEnumerable<Mattin.Project.Core.Models.DTOs.Service.ServiceDetailsDto>
+
+@{
+    ViewData["Title"] = "Services";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Services</h1>
+    <a asp-action="Create" class="btn btn-info text-white">
+        <i class="bi bi-plus-circle"></i> Create New Service
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <div class="btn-group">
+                    <a asp-action="Index"
+                        class="btn @(ViewBag.CurrentCategory == null ? "btn-primary" : "btn-outline-primary")">
+                        All Categories
+                    </a>
+                    <a asp-action="Active"
+                        class="btn @(ViewBag.ShowingActive == true ? "btn-success" : "btn-outline-success")">
+                        Active Services
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Base Price</th>
+                        <th>Hourly Rate</th>
+                        <th>Status</th>
+                        <th>Active Projects</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Category))
+                                {
+                                    <a asp-action="Category" asp-route-category="@item.Category"
+                                        class="badge bg-secondary text-decoration-none">
+                                        @item.Category
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>@item.FormattedBasePrice</td>
+                            <td>@item.FormattedHourlyRate</td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="badge bg-primary rounded-pill">@item.ActiveProjectsCount</span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white"
+                                        title="View Details">
+                                        <i class="bi bi-info-circle"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning"
+                                        title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"
+                                        title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="text-center py-4">
+                <i class="bi bi-gear text-muted" style="font-size: 2rem;"></i>
+                <p class="text-muted mt-2">
+                    @if (ViewBag.CurrentCategory != null)
+                    {
+                        <span>No services found in category '@ViewBag.CurrentCategory'.</span>
+                    }
+                    else if (ViewBag.ShowingActive == true)
+                    {
+                        <span>No active services found.</span>
+                    }
+                    else
+                    {
+                        <span>No services have been added yet.</span>
+                    }
+                </p>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Enable tooltips
+            $('[data-bs-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}

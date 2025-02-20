@@ -25,6 +25,7 @@ public class ProjectMenu(IServiceFactory serviceFactory) : BaseMenu(serviceFacto
     private readonly IClientService _clientService = serviceFactory.CreateClientService();
     private readonly IProjectManagerService _projectManagerService =
         serviceFactory.CreateProjectManagerService();
+    private readonly IServiceService _serviceService = serviceFactory.CreateServiceService();
 
     public override async Task ShowAsync()
     {
@@ -223,6 +224,22 @@ public class ProjectMenu(IServiceFactory serviceFactory) : BaseMenu(serviceFacto
                 ConsoleColor.Magenta
             );
 
+            // Get and select service
+            var servicesResult = await _serviceService.GetActiveServicesAsync();
+            if (servicesResult.IsFailure)
+            {
+                DisplayError(servicesResult.Error);
+                return;
+            }
+
+            var selectedService = _menuHelper.SelectFromList(
+                "Services",
+                servicesResult.Value,
+                service =>
+                    $"{service.Id}: {service.Name} - {service.FormattedBasePrice} (Rate: {service.FormattedHourlyRate})",
+                ConsoleColor.Yellow
+            );
+
             // Select status
             var statuses = new[]
             {
@@ -242,8 +259,23 @@ public class ProjectMenu(IServiceFactory serviceFactory) : BaseMenu(serviceFacto
             var description = _menuHelper.GetUserInput("Description");
             var startDate = _menuHelper.GetDateInput("Start Date");
             var endDate = _menuHelper.GetDateInput("End Date");
-            var hourlyRate = _menuHelper.GetDecimalInput("Hourly Rate (kr)");
-            var totalPrice = _menuHelper.GetDecimalInput("Total Price (kr)", minValue: 0);
+
+            // Use service's hourly rate if available
+            var hourlyRate =
+                selectedService.HourlyRate > 0
+                    ? selectedService.HourlyRate
+                    : _menuHelper.GetDecimalInput("Hourly Rate (kr)");
+
+            // Calculate suggested total price based on service base price and duration
+            var durationDays = (endDate - startDate).Days;
+            var suggestedTotalPrice = selectedService.BasePrice + (hourlyRate * durationDays * 8);
+            Console.WriteLine(
+                $"\nSuggested total price based on duration and service base price: {suggestedTotalPrice:C}"
+            );
+            var totalPrice = _menuHelper.GetDecimalInput(
+                "Total Price (kr)",
+                minValue: selectedService.BasePrice
+            );
 
             var dto = new CreateProjectDto
             {
@@ -256,6 +288,7 @@ public class ProjectMenu(IServiceFactory serviceFactory) : BaseMenu(serviceFacto
                 TotalPrice = totalPrice,
                 ClientId = selectedClient.Id,
                 Status = selectedStatus,
+                ServiceId = selectedService.Id,
             };
 
             var createResult = await _projectService.CreateAsync(dto);

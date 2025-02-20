@@ -27,15 +27,60 @@ public abstract class BaseMenu
 
     protected async Task<bool> ConfirmActionAsync(string message)
     {
-        Console.WriteLine($"\n{message} (Y/N)");
-        while (true)
+        Console.WriteLine($"\n{message}");
+        var options = new[] { "Yes", "No" };
+        var selectedIndex = 1; // Default to "No" for safety
+
+        ConsoleKey keyPressed;
+        do
         {
-            var key = Console.ReadKey(true);
-            if (key.Key == ConsoleKey.Y)
-                return true;
-            if (key.Key == ConsoleKey.N)
-                return false;
-        }
+            Console.CursorVisible = false;
+
+            // Display options
+            Console.SetCursorPosition(0, Console.CursorTop);
+            for (int i = 0; i < options.Length; i++)
+            {
+                if (i == selectedIndex)
+                {
+                    Console.BackgroundColor = ConsoleColor.DarkGray;
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                else
+                {
+                    Console.ResetColor();
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                }
+
+                Console.Write($"[{options[i]}] ");
+                Console.ResetColor();
+            }
+
+            ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+            keyPressed = keyInfo.Key;
+
+            if (keyPressed == ConsoleKey.LeftArrow || keyPressed == ConsoleKey.RightArrow)
+            {
+                selectedIndex = 1 - selectedIndex; // Toggle between 0 and 1
+            }
+            else if (keyPressed == ConsoleKey.Y)
+            {
+                selectedIndex = 0;
+                keyPressed = ConsoleKey.Enter;
+            }
+            else if (keyPressed == ConsoleKey.N)
+            {
+                selectedIndex = 1;
+                keyPressed = ConsoleKey.Enter;
+            }
+
+            Console.SetCursorPosition(0, Console.CursorTop);
+            Console.Write(new string(' ', options.Sum(o => o.Length + 3))); // Clear the line
+            Console.SetCursorPosition(0, Console.CursorTop);
+        } while (keyPressed != ConsoleKey.Enter);
+
+        Console.WriteLine(); // Move to next line
+        Console.CursorVisible = true;
+        return selectedIndex == 0;
     }
 
     protected void DisplayError(string message)

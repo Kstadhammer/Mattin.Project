@@ -1,0 +1,153 @@
+@model Mattin.Project.Core.Models.DTOs.ProjectManager.ProjectManagerDetailsDto
+
+@{
+    ViewData["Title"] = "Project Manager Details";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Project Manager Details</h1>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Contact Information</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Name</dt>
+                    <dd class="col-sm-8">@Model.Name</dd>
+
+                    <dt class="col-sm-4">Department</dt>
+                    <dd class="col-sm-8">
+                        @if (!string.IsNullOrEmpty(Model.Department))
+                        {
+                            <span class="badge bg-secondary">@Model.Department</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">
+                        <a href="mailto:@Model.Email">@Model.Email</a>
+                    </dd>
+
+                    <dt class="col-sm-4">Phone</dt>
+                    <dd class="col-sm-8">
+                        <a href="tel:@Model.PhoneNumber">@Model.PhoneNumber</a>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Project Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-0">
+                    <div class="col-6 border-end">
+                        <div class="text-center p-3">
+                            <h6 class="text-muted mb-1">Active Projects</h6>
+                            <h3 class="mb-0 text-primary">@Model.ActiveProjectsCount</h3>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-center p-3">
+                            <h6 class="text-muted mb-1">Completed</h6>
+                            <h3 class="mb-0 text-success">@Model.CompletedProjectsCount</h3>
+                        </div>
+                    </div>
+                    <div class="col-12 border-top">
+                        <div class="text-center p-3">
+                            <h6 class="text-muted mb-1">Total Project Value</h6>
+                            <h3 class="mb-0">@Model.FormattedTotalProjectValue</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Assigned Projects</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Projects != null && Model.Projects.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Project Number</th>
+                                    <th>Title</th>
+                                    <th>Client</th>
+                                    <th>Status</th>
+                                    <th>Total Price</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var project in Model.Projects.OrderByDescending(p => p.StartDate))
+                                {
+                                    if (project != null)
+                                    {
+                                        <tr>
+                                            <td>@project.ProjectNumber</td>
+                                            <td>@project.Title</td>
+                                            <td>
+                                                @if (project.Client != null)
+                                                {
+                                                    @project.Client.Name
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(project.Status))
+                                                {
+                                                    <span class="badge rounded-pill bg-@(project.Status switch {
+                                                        "Not Started" => "secondary",
+                                                        "In Progress" => "primary",
+                                                        "Completed" => "success",
+                                                        _ => "light"
+                                                    })">
+                                                        @project.Status
+                                                    </span>
+                                                }
+                                            </td>
+                                            <td>@project.FormattedTotalPrice</td>
+                                            <td>
+                                                <a asp-controller="Project" asp-action="Details" 
+                                                   asp-route-id="@project.Id" class="btn btn-sm btn-info text-white">
+                                                    <i class="bi bi-info-circle"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <i class="bi bi-kanban text-muted" style="font-size: 2rem;"></i>
+                        <p class="text-muted mt-2">No projects assigned to this project manager.</p>
+                        <a asp-controller="Project" asp-action="Create" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Assign New Project
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div> 

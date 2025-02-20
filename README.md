@@ -1,6 +1,6 @@
 # Mattin Project Management System
 
-A comprehensive project management system developed for Mattin-Lassei Group AB as part of the Data Storage (Datalagring) course at EC Utbildning.
+A comprehensive project management system developed for Mattin-Lassei Group AB as part of the Data Storage (Datalagring) course at EC Utbildning. The system includes both a Console application and a Web interface.
 
 ## Course Information
 - **Course**: Data Storage (Datalagring)
@@ -10,21 +10,27 @@ A comprehensive project management system developed for Mattin-Lassei Group AB a
 
 ## Project Overview
 
-This project implements a console-based project management system with the following key features:
+This project implements a project management system with two interfaces:
+1. Console-based application for direct system management
+2. Web-based interface using ASP.NET Core MVC for user-friendly access
+
+### Key Features
 - Project tracking with automatic project number generation
 - Client management
 - Project manager assignment
+- Service catalog with pricing
 - Status tracking
 - Budget and timeline management
+- Shared SQLite database between both interfaces
 
 ### Key Requirements Implemented (VG Level)
 
 #### Base Requirements (G)
-- ✅ Frontend application with project listing, creation, and editing
+- ✅ Multiple user interfaces (Console and Web)
 - ✅ Entity Framework Core - Code First implementation
 - ✅ SQLite database integration
-- ✅ Multiple entities/tables (Projects, Clients, etc.)
-- ✅ Service layer for project and client management
+- ✅ Multiple entities/tables (Projects, Clients, Services, etc.)
+- ✅ Service layer for business logic
 - ✅ Repository pattern implementation
 - ✅ Dependency Injection
 - ✅ SOLID principles application
@@ -37,12 +43,14 @@ This project implements a console-based project management system with the follo
 - ✅ Factory pattern utilization
 - ✅ Asynchronous operations with Task/async/await
 - ✅ Transaction management for data consistency
+- ✅ Shared database between applications
 
 ## Technical Stack
 
 - .NET 9.0
 - Entity Framework Core
 - SQLite Database
+- ASP.NET Core MVC
 - AutoMapper
 - Clean Architecture
 
@@ -60,9 +68,13 @@ Mattin.Project/
 │   ├── Repositories/            # Data access implementation
 │   ├── Services/                # Business logic implementation
 │   └── Factories/              # Object creation patterns
-└── Mattin.Project.Presentation/   # Console UI
-    ├── Helpers/                 # UI utilities
-    └── Menus/                   # Interactive menus
+├── Mattin.Project.Presentation/   # Console UI
+│   ├── Helpers/                 # UI utilities
+│   └── Menus/                   # Interactive menus
+└── Mattin.Project.Web/           # Web UI
+    ├── Controllers/             # MVC Controllers
+    ├── Views/                   # Razor views
+    └── Models/                  # View models
 ```
 
 ## Features
@@ -84,6 +96,12 @@ Mattin.Project/
 - Department-based organization
 - Project assignment
 - Workload tracking
+
+### Service Management
+- Service catalog
+- Pricing configuration
+- Category organization
+- Active/Inactive status
 
 ## AI Assistance Acknowledgment
 
@@ -116,20 +134,32 @@ cd Mattin.Project
 dotnet build
 ```
 
-4. Run the application:
+4. Run the Console application:
 ```bash
 dotnet run --project Mattin.Project.Presentation
 ```
 
+5. Run the Web application:
+```bash
+dotnet run --project Mattin.Project.Web
+```
+
 ## Database
 
-The application uses SQLite with Entity Framework Core. The database will be automatically created in the `Data` directory on first run.
+The application uses SQLite with Entity Framework Core. The database will be automatically created in the `Data` directory on first run. Both the Console and Web applications share the same database file.
 
 ## Navigation
 
+### Console Application
 - Use arrow keys (↑/↓) to navigate menus
 - Press Enter to select an option
 - Follow on-screen prompts for data input
+
+### Web Application
+- Navigate using the menu bar
+- Use forms to create and edit data
+- Click action buttons for operations
+- Responsive design for all devices
 
 ## License
 
